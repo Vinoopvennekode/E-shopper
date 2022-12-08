@@ -1,0 +1,165 @@
+<%- include("../admin/layout/header") %>
+<!-- <script>
+  $(document).ready(function(){
+  $(".panel").click(function(){
+  $(".modal-title").text($(this).find(".panel-title").text());
+  $(".modal-body p").text($(this).find(".panel-body").text());
+  $("#myModal").modal('show');
+  })
+  });
+  </script>    -->
+<div class="px-4 mt-3">
+  <div class="card">
+    <div class="card-header container-fluid">
+        <div class="row">
+          <div class="col-md-10">
+            <h3 class="w-75 ">PRODUCTS</h3>
+          </div>
+          <div class="col-md-2 float-right">
+            <a href='/admin/add_products'>
+                <button class="btn btn-primary">
+                    Add Product
+                </button>
+            </a>
+            
+           </div>
+        </div>
+      </div>
+    <div class="table-responsive text-nowrap">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Title</th>
+            <th>brand</th>
+            <th>category</th>
+            <th>Date</th>
+            <th>view product</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        
+        <tbody class="table-border-bottom-0">  
+       <% for(var i=0; i<product.length; i++) { %>
+          <tr>
+            <td><img width="40px" height="40px"src="/image<%= product[i].imageurl[0].filename %>" alt="...."></td>
+            <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong> <%=product[i].title%></strong></td>
+            
+            <td>
+
+
+                <%=product[i].brand%>
+
+              <!-- <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
+                <li
+                  data-bs-toggle="tooltip"
+                  data-popup="tooltip-custom"
+                  data-bs-placement="top"
+                  class="avatar avatar-xs pull-up"
+                  title="Lilian Fuller"
+                >
+                  <img src="../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle" />
+                </li>
+                <li
+                  data-bs-toggle="tooltip"
+                  data-popup="tooltip-custom"
+                  data-bs-placement="top"
+                  class="avatar avatar-xs pull-up"
+                  title="Sophia Wilkerson"
+                >
+                  <img src="../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle" />
+                </li>
+                <li
+                  data-bs-toggle="tooltip"
+                  data-popup="tooltip-custom"
+                  data-bs-placement="top"
+                  class="avatar avatar-xs pull-up"
+                  title="Christina Parker"
+                >
+                  <img src="../assets/img/avatars/7.png" alt="Avatar" class="rounded-circle" />
+                </li>
+              </ul> -->
+            </td>
+            <td> <%=product[i].category.name %></td>
+                <td><%=product[i].date %></td>  
+                <td><a href="/admin/productDetails/<%=product[i]._id%>"><button type="button" class="btn btn-success">Details</button></a></td>    
+                <!-- <td> 
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qwert1234">
+                    View details
+                  </button>
+                  
+                  
+                  <div class="modal fade" id="qwert1234" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Product details</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+                          <h3>Name:<%=product[i].title %></h3>
+                          <h5>Brand:<%=product[i].brand %></h5>
+                          <h5>Product category:<%=product[i].category.name %></h5>
+                          <h5>Added date:<%=product[i].date %></h5>
+                          <h5>Balance Quantity:<%=product[i].quantity %></h5>
+                          <h5>Price:<%=product[i].price %></h5>
+                          <h5>Product size<%=product[i].size %></h5>
+                          <h5>Product color:<%=product[i].color %></h5>
+                          <h5>discription:<%=product[i].discription %></h5>
+                          <img width="100px" height="100px"src="/image<%= product[i].imageurl[0].filename %>" alt="....">
+                          
+                        
+
+
+
+
+                        </div>
+                        <div class="modal-footer">
+                          <form action="/admin/edit" method="post">
+                            <input style="display: none" name="id" type="text" value="<%=product[i]._id %>">
+                      <button class="dropdown-item btn btn-primary"
+                        ><i class="bx bx-edit-alt me-1"></i> Edit</button
+                      >
+                      </form>
+                      <form action="/admin/delete" method="post">
+                        <input style="display: none" type="text"    name="id" value="<%=product[i]._id %>">
+                            <button class="dropdown-item btn btn-danger" onClick="return confirm('are you sure to delete this ?')" 
+                              ><i class="bx bx-trash me-1"></i> Delete</button
+                            >
+                        </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div></td>      -->
+            <td>
+              <div class="dropdown">
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <form action="/admin/edit" method="post">
+                        <input style="display: none" name="id" type="text" value="<%=product[i]._id %>">
+                  <button class="dropdown-item" 
+                    ><i class="bx bx-edit-alt me-1"></i> Edit</button
+                  >
+                  </form>
+              <form action="/admin/delete" method="post">
+              <input style="display: none" type="text"    name="id" value="<%=product[i]._id %>">
+                  <button class="dropdown-item" onClick="return confirm('are you sure to delete this ?')" 
+                    ><i class="bx bx-trash me-1"></i> Delete</button
+                  >
+              </form>
+                </div>
+              </div>
+            </td>
+          </tr>  
+         <% } %>
+         
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- <%-include("../admin/layout/footer")%> -->

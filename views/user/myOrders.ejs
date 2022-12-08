@@ -1,0 +1,76 @@
+<%- include("../user/layout/header") %>
+
+<div class="px-5">
+<div class="px-4 mt-3">
+    
+        <div class="card-header container-fluid">
+          <%if(!order.length){%>
+            <h1>not yet orderd</h1>
+            <a href="/shop" class="btn btn-primary cart-btn-transform m-3" data-abc="true">continue shopping</a>
+            <%}else{%>
+
+            <div class="row">
+              <div class="col-md-10">
+                <h3 class="w-75 "> MY ORDERS</h3>
+              </div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">orderID</th>
+                    <th scope="col">date</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">status</th>
+                    <th scope="col">details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <% for(var i=0; i<order.length; i++) { %>
+                  <tr>
+                    <th scope="row"> <%=order[i]._id%></th>
+                    <td><%=order[i].date%></td>
+                    <td><%=order[i].total%></td>
+                    <td><%=order[i].orderStatus%></td>
+                    <td><a href="/myOrderDetails/<%=order[i]._id%>"><button type="button" class="btn btn-success">Details</button></a></td>
+                  </tr>
+                  <%}%>
+                </tbody>
+              </table>
+              
+            </div>
+            <%}%>
+          </div>
+      
+    </div>
+<!-- 
+    <table class="table table-hover">
+        <thead>
+            
+            <tr>
+           
+            
+            <th>orderID</th>
+            <th>date</th>
+            
+            <th>Amount</th>
+            <th>status</th>
+          
+            <th>details</th>
+          </tr>
+        </thead>
+        
+        <tbody class="table-border-bottom-0">  
+            <% for(var i=0; i<order.length; i++) { %>
+       
+          <tr>
+         
+            <td> <%=order[i]._id%></td>
+            <td><%=order[i].date%></td>  
+        
+            <td><%=order[i].total%></td>
+             <td><%=order[i].orderStatus%></td>  
+          
+             <td><a href="/admin/orderDetails/<%=order[i]._id%>"><button type="button" class="btn btn-success">Details</button></a></td>
+          </tr>  
+         <%}%>
+        </tbody>
+      </table> -->

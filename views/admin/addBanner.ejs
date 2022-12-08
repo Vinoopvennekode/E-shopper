@@ -1,0 +1,97 @@
+
+<body>
+    <%- include("../admin/layout/header") %>   
+    
+    <div class="px-4">
+    <div class="card my-4 ">
+        <h5 class="card-header">Add Banner</h5>
+        <div class="card-body">
+            <form action="/admin/add_banner" method="post"enctype="multipart/form-data" >
+          <div class="mb-3 row">
+            <label for="html5-text-input" class="col-md-2 col-form-label">small header</label>
+            <div class="col-md-10">
+                <input
+                type="text"
+                class="form-control"
+                id="email"
+                name="title1"
+                placeholder="Enter small header "
+                autofocus
+                onkeyup="nullEmail()" 
+
+                
+              />
+              <small><span id="titleerror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label for="html5-search-input" class="col-md-2 col-form-label">Title</label>
+            <div class="col-md-10">
+                <input
+                type="text"
+                class="form-control"
+                id="email"
+                name="title"
+                placeholder="Enter title"
+                autofocus
+                onkeyup="nullEmail()" 
+
+                
+              />
+              <small><span id="priceerror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label for="html5-search-input" class="col-md-2 col-form-label">Url</label>
+            <div class="col-md-10">
+                <input
+                type="text"
+                class="form-control"
+                id="email"
+                name="url"
+                placeholder="Enter image url "
+                autofocus
+                onkeyup="nullEmail()" 
+
+                
+              />
+              <small><span id="quantityerror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
+        
+          <div class="'mb-3 row">
+            <div class="mb-3">
+              <label for="formFileMultiple" class="form-label">Multiple files input example</label>
+              <input class="form-control" name="imageurl" type="file" id="formFileMultiple" multiple />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-10">
+            </div>
+            <div class="col-md-2 float-right">
+                <button class="btn btn-primary d-grid w-100"  type="submit">Submit</button>
+              
+             </div>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

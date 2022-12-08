@@ -1,0 +1,147 @@
+<body>
+    <!-- Content -->
+
+    <div class="container-xxl">
+      <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+          <!-- Register Card -->
+          <div class="card text-center w-25 m-auto">
+            <div class="card-body">
+            
+              <p class="mb-4">Make your app management easy and fun!</p>
+
+              <form id="form" name="myform" class="mb-3"  action="/register" method="POST" onclick="return validateForm()" >
+                <div class="mb-3">
+                  <label for="username" class="form-label">Username</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="nameid"
+                    name="userName"
+                    placeholder="Enter your username"
+                    autofocus,
+                    onkeyup="nullName()"
+                  />
+                  <small> <span id="nameerror"  class=" cursor-pointer text-danger"></span></small>
+                </div>
+                
+
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="text" class="form-control" id="emailid" name="email" placeholder="Enter your email" onkeyup="nullEmail()" />
+                  <small><span id="emailerror"   class=" cursor-pointer text-danger">
+                  
+                  </span></small>
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label">Mobile Number</label>
+                  <input type="text" class="form-control" id="mobileid" name="mobile" placeholder="Enter your mobile" onkeyup="nullMobile()">
+                  <small> <span id="mobilerror"  class=" cursor-pointer text-danger"></span></small>
+
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">password</label>
+                  <div class="inner-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="passwordid"
+                    name="password"
+                    placeholder="Enter your password "
+                    autofocus
+                    onkeyup="nullPassword()" 
+                    
+                  />
+                 <small> <span id="passworderror"  class=" cursor-pointer text-danger"></span></small>
+                </div>
+                </div>
+
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
+                    <label class="form-check-label" for="terms-conditions">
+                      I agree to
+                      <a href="javascript:void(0);">privacy policy & terms</a>
+                    </label>
+                  </div>
+                </div>
+                <button class="btn btn-primary d-grid w-100">Sign up</button>
+              </form>
+
+              <p class="text-center">
+                <span>Already have an account?</span>
+                <a href="/login">
+                  <span>Sign in instead</span>
+                </a>
+              </p>
+            </div>
+          </div>
+          <!-- Register Card -->
+        </div>
+      </div>
+    </div>
+
+
+    <script>
+      function validateForm() {
+        let name = document.getElementById("nameid").value;
+        let email = document.getElementById("emailid").value;
+        let mobile = document.getElementById("mobileid").value;
+        let password = document.getElementById("passwordid").value;
+        
+        let abcde = true;
+    
+    if (name === "") {
+      document.getElementById("nameerror").innerHTML = "Please enter a name";
+      abcde = false;
+    }
+    if (email === "") {
+      document.getElementById("emailerror").innerHTML = "Please enter an email";
+      abcde = false;
+    }
+    if (mobile === "") {
+      document.getElementById("mobilerror").innerHTML =
+        "Please enter your mobile number";
+      abcde = false;
+    }
+    if (password === "") {
+      document.getElementById("passworderror").innerHTML =
+        "Please enter your password";
+      abcde = false;
+    }
+    return abcde;
+  }
+
+  function nullName() {
+    document.getElementById("nameerror").innerHTML = "";
+  }
+  function nullEmail() {
+    document.getElementById("emailerror").innerHTML = "";
+  }
+
+  function nullPassword() {
+    document.getElementById("passerror").innerHTML = "";
+  }
+
+  
+  
+    function nullMobile() {
+      document.getElementById("mobilerror").innerHTML = "";
+    }
+  
+    function onlyNumberKey(evt) {
+      // Only ASCII character in that range allowed
+      var ASCIICode = evt.which ? evt.which : evt.keyCode;
+      if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57)) return false;
+      return true;
+    }
+  
+    function ValidateEmail(mail) {
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        return true;
+      }
+      alert("You have entered an invalid email address!");
+      return false;
+    }
+  </script>
+</body>

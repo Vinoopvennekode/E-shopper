@@ -1,0 +1,48 @@
+<%- include("../admin/layout/header") %>
+
+<div class="px-4 mt-3">
+<div class="card">
+    <div class="card-header container-fluid">
+        <div class="row">
+          <div class="col-md-10">
+            <h3 class="w-75 ">ORDERS</h3>
+          </div>
+          
+        </div>
+      </div>
+    <div class="table-responsive text-nowrap">
+      <table class="table table-hover">
+        <thead>
+            
+            <tr>
+           
+            <th>User</th>
+            <th>orderID</th>
+            <th>paymentMethod</th>
+            <th>Amount</th>
+            <th>status</th>
+            <th>date</th>
+            <th>details</th>
+          </tr>
+        </thead>
+        
+        <tbody class="table-border-bottom-0">  
+            <% for(var i=0; i<order.length; i++) { %>
+       
+          <tr>
+            <td><%=order[i].user.userName%> </td>
+            <td> <%=order[i]._id%></td>
+            <td><%=order[i].paymentMethod%></td>
+            <td><%=order[i].total%></td>
+             <td><%=order[i].orderStatus%></td>  
+             <td><%=order[i].date%></td>    
+             <td><a href="/admin/orderDetails/<%=order[i]._id%>"><button type="button" class="btn btn-success">Details</button></a></td>
+          </tr>  
+         <%}%>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- <%-include("../admin/layout/footer")%> -->

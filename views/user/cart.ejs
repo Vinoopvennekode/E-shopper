@@ -1,0 +1,247 @@
+<%- include("../user/layout/header") %>
+<style></style>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+   <!-- Page Header Start -->
+   <div class="container-fluid bg-secondary mb-5">
+    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+        <h1 class="font-weight-semi-bold text-uppercase mb-3">Shopping Cart</h1>
+        <div class="d-inline-flex">
+            <p class="m-0"><a href="">Home</a></p>
+            <p class="m-0 px-2">-</p>
+            <p class="m-0">Shopping Cart</p>
+        </div>
+    </div>
+ </div>
+ <!-- Page Header End -->
+
+
+ <!-- Cart Start -->
+ 
+
+    <%if(cart.cartItem.length==0){%>
+        <div class="container-fluid  mt-100">
+            <div class="row">
+            
+               <div class="col-md-12">
+               
+                       <!-- <div class="card">
+                   <div class="card-header">
+                   <h5>Cart</h5>
+                   </div> -->
+                   <div class="card-body cart">
+                           <div class="col-sm-12 empty-cart-cls text-center">
+                               <img src="https://cdn-icons-png.flaticon.com/512/102/102661.png" width="130" height="130" class="img-fluid mb-4 mr-3">
+                               <h3><strong>Your Cart is Empty</strong></h3>
+                               <h4>Add something to make me happy :)</h4>
+                               <a href="/shop" class="btn btn-primary cart-btn-transform m-3" data-abc="true">continue shopping</a>
+                               
+                           
+                           </div>
+                   </div>
+           <!-- </div> -->
+                   
+               
+               </div>
+            
+            </div>
+           
+           </div>
+        <%}else{%>
+     <div class="container-fluid pt-5">
+    <div class="row px-xl-5">
+        
+        <div class="col-lg-8 table-responsive mb-5">
+            <table class="table table-bordered text-center mb-0">
+                <thead class="bg-secondary text-dark">
+                    <tr>
+                        <th>Products</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody class="align-middle">
+                    <% for(var i=0;i<cart.cartItem.length; i++){%>
+                    <tr>
+                        <td class="align-middle"><img src="/image<%=cart.cartItem[i].product.imageurl[0].filename %>" alt="" style="width: 50px;"><%=cart.cartItem[i].product.title%> </td>
+                        <td class="align-middle"><%=cart.cartItem[i].product.price%></td>
+                        <td class="align-middle">
+                            <div class="input-group quantity mx-auto" style="width: 100px;">
+                                <div class="input-group-btn"> 
+                                    <% if (cart.cartItem[i].quantity>1) { %>
+                                    <button class="btn btn-sm btn-primary btn-minus"onclick="decQuantity('<%=cart.cartItem[i].product._id%>','<%=users._id%>','<%=cart.cartItem[i].product.price%>','<%=cart.cartItem[i].quantity%>')" >
+                                    <i class="fa fa-minus"></i>
+                                    </button>
+                                    <%}else{%>
+                                        <button style="visibility:hidden" class="btn btn-sm btn-primary btn-minus"onclick="decQuantity('<%=cart.cartItem[i].product._id%>','<%=users._id%>','<%=cart.cartItem[i].product.price%>','<%=cart.cartItem[i].quantity%>')" >
+                                            <i class="fa fa-minus"></i>
+                                            </button>
+                                            <%}%>
+                                </div>
+                                <input type="text" id="quantityBox<%=cart.cartItem[i].product._id%>" class="form-control form-control-sm bg-secondary text-center" value="<%=cart.cartItem[i].quantity%>">
+                                
+                                <div class="input-group-btn">
+                                    <button class="btn btn-sm btn-primary btn-plus" onclick="incQuantity('<%=cart.cartItem[i].product._id%>','<%=users._id%>','<%=cart.cartItem[i].product.price%>','<%=cart.cartItem[i].quantity%>')">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="align-middle"><p id="totalBox<%=cart.cartItem[i].product._id%>"><%=cart.cartItem[i].total%></p></td>
+                        <td class="align-middle"><button onclick="deletecart('<%=cart.cartItem[i].product._id%>','<%=users._id%>','<%=cart.cartItem[i].total%>')" class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
+                    </tr>
+                    <%}%>
+                  
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-4">
+            <form class="mb-5" action="">
+                <div class="input-group">
+                    <input type="text" class="form-control p-4" placeholder="Coupon Code">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary">Apply Coupon</button>
+                    </div>
+                </div>
+            </form>
+            <div class="card border-secondary mb-5">
+                <div class="card-header bg-secondary border-0">
+                    <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3 pt-1">
+                        <h6 class="font-weight-medium">Subtotal</h6>
+                        <h6 id="subtotal" class="font-weight-medium">$<%=cart.subtotal%></h6>
+                    </div>
+                    <!-- <div class="d-flex justify-content-between">
+                        <h6  class="font-weight-medium">Shipping</h6>
+                        <h6 class="font-weight-medium">$10</h6>
+                    </div> -->
+                </div>
+                
+                <div class="card-footer border-secondary bg-transparent">
+                    <div class="d-flex justify-content-between mt-2">
+                        <h5 class="font-weight-bold">Total</h5>
+                        <h5 id="discount" class="font-weight-bold">$<%=cart.subtotal%></h5>
+                    </div>
+                    <a href="/checkout"><button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button></a>
+                </div>
+             
+            </div>
+        </div>
+       
+     </div>
+     <%}%>  
+ </div>
+
+ <!-- Cart End --> 
+ <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+ <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+ <script>
+
+
+const incQuantity = (id, userId,price) => {
+    
+    if (document.getElementById("quantityBox" + id).value < 10) {
+      axios.patch("/quantityInc", { id: id ,userId:userId,price:price}).then((e) => {
+        if (e.data.response) {
+          document.getElementById("quantityBox" + id).value = e.data.quantity;
+          document.getElementById("totalBox" + id).innerHTML = e.data.total;
+          document.getElementById("subtotal").innerHTML = e.data.subtotal;
+          document.getElementById("discount").innerHTML = e.data.subtotal;
+          location.reload()
+        }
+      });
+    }
+  }
+
+
+  const decQuantity = (id, userId,price) => {
+    
+    if (document.getElementById("quantityBox" + id).value>1) {
+      axios.patch("/quantitydec", { id: id ,userId:userId,price:price}).then((e) => {
+        if (e.data.response) {
+            console.log(e.data.response);
+          document.getElementById("quantityBox" + id).value = e.data.quantity;
+          
+          document.getElementById("totalBox" + id).innerHTML = e.data.total;
+          document.getElementById("subtotal").innerHTML = e.data.subtotal;
+          document.getElementById("discount").innerHTML = e.data.subtotal;
+          location.reload()
+         
+        }
+      });
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+    function changeQuantity(proId,price,userId,count){
+        let quantity=  document.getElementById('id').value
+        let total=  document.getElementById('total').innerHTML
+        
+        
+        $.ajax({
+            url:'/changeQuantity',
+            data:{
+                product:proId,
+                price:price,
+                user:userId,
+                count:count,
+                quantity:quantity,
+                total:total
+            },
+            method:'POST',
+            success:(response)=>{
+                
+                if(response.removeProduct){
+                  
+                    // alert('')
+                    location.reload()
+                }else {
+
+                    
+                    document.getElementById('id').value=parseInt(quantity)+parseInt( count)
+                    
+                }
+            }
+        }) 
+    }
+
+function deletecart(proId,userId,total){
+console.log('jksdfakjghskjghfsdkjghsdfkjghsdfkjghs');
+     swal({
+  title: "Are you sure?",
+  text: "Once deleted, you will not be able to recover ",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    axios.delete('/deletecart',{data:{proId:proId,userId:userId,total:total}}).then((e)=>{
+    location.href='/cart'
+})
+  } 
+});
+
+           
+        }
+    
+
+
+ </script>
+
+<%-include("../user/layout/footer")%>

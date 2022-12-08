@@ -1,0 +1,135 @@
+
+  <body>  
+
+<body>
+    <!-- Content -->
+
+    <div class="container-xxl">
+      <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+          <!-- Register -->
+          <div class="card text-center w-25 m-auto">
+            <div class="card-body">
+           
+            
+              <h4 class="mb-2">Welcome to E SHOPPER</h4>
+              <p class="mb-4">Please sign-in to your account</p>
+            
+              <%if(blocking.length){%>
+                <p class="text-danger"><%=blocking%></p>
+              <%}%>
+              <%if(userExist.length){%>
+                <p class="text-danger"><%=userExist%></p>
+              <%}%>
+              <p class="text-danger" id="errorid"></p>
+              
+                <div class="mb-3">
+                  <div class="inner-group">
+                  <label for="email" class="form-label">Email </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email "
+                    autofocus
+                    onkeyup="nullEmail()" 
+
+                    
+                  />
+                  <small><span id="emailerror"   class=" cursor-pointer text-danger">
+                  
+                  </span></small>
+                </div>
+                </div>
+                <div class="mb-3 form-password-toggle">
+                  <div class="d-flex justify-content-between">
+                    <label class="form-label" for="password">Password</label>
+                    <a href="auth-forgot-password-basic.html">
+                      <small>Forgot Password?</small>
+                    </a>
+                  </div>
+                  <div class="mb-3">
+                    <div class="inner-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="password"
+                      name="password"
+                      placeholder="Enter your password "
+                      autofocus
+                      onkeyup="nullPassword()" 
+                      
+                    />
+                   <small> <span id="passworderror"  class=" cursor-pointer text-danger"></span></small>
+                  </div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="remember-me" />
+                    <label class="form-check-label" for="remember-me"> Remember Me </label>
+                  </div>
+                </div>
+                <div class="mb-3 input-group">
+                  <button class="btn btn-primary d-grid w-100" onclick="loginCheck()" type="submit">Sign in</button>
+                  <small><span id="submit-error" class="text-danger"> </span></small>
+                </div>
+              </form>
+
+              <p class="text-center">
+                <span>New on our platform?</span>
+                <a href="/register">
+                  <span>Create an account</span>
+                </a>
+              </p>
+            </div>
+          </div>
+          <!-- /Register -->
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>function loginCheck(){
+      let email =  document.getElementById('email').value
+      let password =  document.getElementById('password').value
+      axios.post('/login',{email:email,password:password}).then((e)=>{
+       if(e.data.response){
+         document.getElementById('errorId').innerHTML = e.data.response
+       }else location.href ='/'
+   
+   })
+   }</script>
+
+
+
+    
+<script>
+    function validateLogin() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      let Return=true;
+      if (email === "") {
+        document.getElementById("emailerror").innerHTML =
+          "Please enter your email";
+        Return =false;
+      }
+      if (password === "") {
+        document.getElementById("passworderror").innerHTML ="Please enter your password";
+        Return= false;
+      }
+      return Return;
+    }
+  
+    function nullEmail() {
+      document.getElementById("emailerror").innerHTML =""
+    }
+    function nullPassword() {
+      document.getElementById('passworderror').innerHTML=""
+  }
+  </script>
+    
+    </body>
+

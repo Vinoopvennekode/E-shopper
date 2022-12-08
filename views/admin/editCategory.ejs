@@ -1,0 +1,41 @@
+<%- include("../admin/layout/header") %>
+
+<div class="px-4">
+    <div class="card my-4 ">
+        <h5 class="card-header">edit Product</h5>
+        <div class="card-body">
+            <form class="mb-3" action="/admin/editCategory/<%=category._id%>" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <label for="email" class="form-label">Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id=""
+                    name="name"
+                    value="<%=category.name%>"
+                    autofocus
+                  />
+                </div>
+                <div class="mb-3 ">
+                  <label for="" class="form-label">Discription</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id=""
+                    name="discription"
+                    placeholder=""
+                    autofocus
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="formFileMultiple" class="form-label">Multiple files input example</label>
+                  <input class="form-control" name="imageurl" type="file" id="formFileMultiple" multiple />
+                <div class="mt-3 float-right">
+                  <button class="btn btn-danger" type="submit">
+                   Submit
+                  </button>
+                </div>
+              </form>
+        </div>
+    </div>
+</div>
