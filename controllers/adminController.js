@@ -3,8 +3,10 @@ const userModel = require("../model/userModel");
 const categoryModel=require('../model/categories')
 const bannerModel=require('../model/bannerModel')
 const orderModel=require('../model/orderModel')
+const couponModel=require('../model/couponModel')
 const moment = require("moment");
 const upload = require("../middleware/multer");
+const { response } = require("express");
 
 const userNameDB = "vinoop@1";
 const passwordDB = "111";
@@ -69,7 +71,7 @@ const add_products = async (req, res) => {
       brand,
       description,
     } = req.body;
-    if(title&&price&&size&&color&&quantity&&date&&category&&brand&&description){
+    if(title&&price&&size&&color&&quantity&&category&&brand&&description){
     console.log(req.body);
     const newProduct = new productModel({
       title: title,
@@ -156,7 +158,7 @@ const productEditview = (req, res) => {
   productModel
     .findById(req.body.id)
     .then((product) => {
-      res.render("admin/edit", { layout: "./layout/adminLayout", product });
+      res.render("admin/editproducts", { layout: "./layout/adminLayout", product });
     })
     .catch((err) => {
       console.log(err);
@@ -437,7 +439,108 @@ const orderId=req.params.id
       res.status(404).json({ error: "page not found" });
     }
   }
+
+
+
+  const coupon_view=async(req,res)=>{
+    await couponModel.find().then((coupon)=>{
+      res.render('admin/coupon_view',{coupon,couponExist: req.flash("couponExist")})
+    })
+   
+  }
   
+
+
+  const add_coupon=(req,res)=>{
+    res.render('admin/add_coupon')
+  }
+
+
+
+
+
+  const add_couponpost=async(req,res)=>{
+    const{code,CouponType,cutOff,minCartAmount,maxRedeem,couponCount,expirydate}=req.body
+
+try{
+  if(code&&CouponType&&cutOff&&minCartAmount&&maxRedeem&&couponCount&&expirydate){
+    console.log('coopppnn');
+    console.log(req.body); 
+  
+
+    let Code = code.toUpperCase();
+    await couponModel.find({code:Code}).then(async(result)=>{
+      if(result.length==0){
+        const coupon=new couponModel({
+          code:Code,
+          cutOff:cutOff,
+          couponType:CouponType,
+          maxRedeemAmount:maxRedeem,
+          minCartAmount:minCartAmount,
+          couponCount:couponCount,
+          expireDate:expirydate
+        })
+        coupon.save();
+        res.redirect('/admin/coupon')
+      }else{
+        req.flash('couponExist',"coupon already exist")
+        res.redirect('/admin/coupon')
+      }
+    })
+
+  }else{
+    console.log('enter all input');
+    
+  }
+}catch{}
+
+  }
+
+  const couponActive=async(req,res)=>{
+    console.log('active');
+    console.log(req.params.id);
+    await couponModel.findByIdAndUpdate(req.params.id,{$set:{status:'ACTIVE'}})
+    res.redirect('/admin/coupon')
+
+  }
+  const couponBlock=async(req,res)=>{
+    console.log('block');
+    console.log(req.params.id);
+    await couponModel.findByIdAndUpdate(req.params.id,{$set:{status:'BLOCK'}})
+    res.redirect('/admin/coupon')
+
+  }
+
+
+
+const deletecoupon= async(req,res)=>{
+  try{
+    await couponModel.findByIdAndDelete(req.params.id)
+    res.redirect('/admin/coupon')
+  }catch{}
+}
+
+
+const editCoupon=async(req,res)=>{
+  try{
+    console.log(req.params.id);
+    const id=req.params.id
+   await couponModel.findOne({_id:id}).then((coupon)=>{
+    res.render('admin/editCoupon',{coupon})
+   })
+   
+  }catch{}
+}
+
+  const changeOrderStatus=async(req,res)=>{
+    
+    const orderId=req.body.id
+    const value=req.body.value
+console.log(orderId,value);
+   await orderModel.findByIdAndUpdate(orderId,{$set:{orderStatus:value}})
+
+res.json({update:true})
+  }
 module.exports = {
     
     
@@ -460,7 +563,14 @@ module.exports = {
   editCategory,edit_Category,
   deleteCategory,
   banner,addbanner,
-  addbannerpost,order,orderDeatails
+  addbannerpost,order,orderDeatails,
+  coupon_view,
+  add_coupon,
+  add_couponpost,changeOrderStatus,
+  couponBlock,
+  couponActive,
+  deletecoupon,
+  editCoupon
 
   
 }

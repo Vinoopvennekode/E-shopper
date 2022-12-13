@@ -148,7 +148,33 @@
                     </div>
                 </div>
             </div>
+            
             <div class="col-lg-4">
+              <div class="card border-secondary mb-5">
+            
+                <div class="input-group">
+                    <input type="text" class="form-control p-4" id="result" placeholder="Coupon Code">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" onclick="verifyCoupon('<%=subtotal%>')" >Apply Coupon</button>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="form-group">
+                        <p>applicable coupons</p>
+                        <% for(var i=0; i<coupon.length; i++) { %>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" name="couponCode" value=" <%=coupon[i].code%>" id=" <%=coupon[i].code%>">
+                            <label  id="paypal-button-container" class="custom-control-label" for=" <%=coupon[i].code%>"> <%=coupon[i].code%></label>
+                            <p>Get upto 5% Off on 1490 and Above. Max Discount Rs.1500.</p>
+                        </div>
+                        <%}%>
+                    </div>
+                    <p id="CouponError"></p>
+                </div>
+           
+            </div>
+            <form class="row contact_form" id="formId"  >
                 <div class="card border-secondary mb-5">
                     <div class="card-header bg-secondary border-0">
                         <h4 class="font-weight-semi-bold m-0">Order Total</h4>
@@ -174,19 +200,24 @@
                             <h6 class="font-weight-medium">Subtotal</h6>
                             <h6 class="font-weight-medium"><%=subtotal%></h6>
                         </div>
-                        <!-- <div class="d-flex justify-content-between">
+                        <div class="d-flex justify-content-between mb-3 pt-1">
                             <h6 class="font-weight-medium">Shipping</h6>
                             <h6 class="font-weight-medium">$10</h6>
-                        </div> -->
+                        </div>
+                        <div class="d-flex justify-content-between mb-3 pt-1">
+                          <h6 class="font-weight-medium">Coupon Discount</h6>
+                          <h6 class="font-weight-medium"><span id="couponDiscount"> nil</span></h6>
+                      </div>
                     </div>
                     <div class="card-footer border-secondary bg-transparent">
                         <div class="d-flex justify-content-between mt-2">
                             <h5 class="font-weight-bold">Total</h5>
-                            <h5 class="font-weight-bold"><%=subtotal%></h5>
+                            <h5 class="font-weight-bold"><span id="grandTotalAmount"><%=subtotal%></span></h5>
+                            <input name="total" hidden id="grandtotalinput"value="<%=subtotal%>" >
                         </div>
                     </div>
                 </div>
-                <form class="row contact_form" id="formId"  >
+              
                 <div class="card border-secondary mb-5">
                     <div class="card-header bg-secondary border-0">
                         <h4 class="font-weight-semi-bold m-0">Payment</h4>
@@ -210,6 +241,9 @@
                                 <label class="custom-control-label" for="cash on delivery">Direct Check</label>
                             </div>
                         </div>
+                        <!-- <div class="form-group">
+                          <div  id="paypal-button-container"></div>
+                      </div> -->
                     </div>
                     <div class="card-footer border-secondary bg-transparent">
                         <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3" type="submit">Place Order</button>
@@ -224,15 +258,120 @@
 
 
 
+    <!-- <script src="https://www.paypal.com/sdk/js?client-id=AeJttyD5l0O2jpXHTkg92fV8XiDpjywMkL6umU4M7Kf-iHQ9iB6CU68sRSwdMY7nh30kVxxsDVdn0HNO&currency=USD"></script>
+    <script >
+    
+paypal
+.Buttons({
+  // Sets up the transaction when a payment button is clicked
+  createOrder: function (data, actions) {
+    return fetch("/api/orders", {
+      method: "post",
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        return response.id;
+      });
+  },
+
+  // Finalize the transaction after payer approval
+  onApprove: function (data, actions) {
+    return fetch(`/api/orders/${data.orderID}/capture`, {
+      method: "post",
+    })
+      .then((response) => response.json())
+      .then(function (orderData) {
+        // Successful capture! For dev/demo purposes:
+        console.log(
+          "Capture result",
+          orderData,
+          JSON.stringify(orderData, null, 2)
+        );
+        var transaction = orderData.purchase_units[0].payments.captures[0];
+        alert(
+          "Transaction " +
+            transaction.status +
+            ": " +
+            transaction.id +
+            "\n\nSee console for all available details"
+        );
+
+        // When ready to go live, remove the alert and show a success message within this page. For example:
+        // var element = document.getElementById('paypal-button-container');
+        // element.innerHTML = '';
+        // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+        // Or go to another URL:  actions.redirect('thank_you.html');
+      });
+  },
+})
+.render("#paypal-button-container");
+    
+    
+    
+    </script> -->
+    <script>
+      let radioBtns=document.querySelectorAll("input[name='couponCode']");
+      let result=document.getElementById('result').value
+let findSelected=()=>{
+  let selected =document.querySelector("input[name='couponCode']:checked")
+  console.log('sadsda');
+  console.log(selected.value);
+  document.getElementById('result').value=selected.value
+
+}
 
 
+      radioBtns.forEach(redioBtn=>{
+        redioBtn.addEventListener("change",findSelected);
+})
+    </script>
 <script>
-
 
 const submit=(id)=>{
     axios.get('/submitAddress',{params:{id:id}})
 }
+
+
+
+function verifyCoupon(subtotal){
+  let couponCode = document.getElementById("result").value;
+    let total = subtotal;
+    console.log(total);
+if(couponCode==0){
+  document.getElementById("CouponError").style.color = "red";
+      document.getElementById("CouponError").innerHTML = "Enter a Coupon Code";
+}else{
+  $.ajax({
+    url:'/applycoupon',
+    method:'post',
+    data:{total,couponCode},
+    success:(response)=>{
+      if(response.status==true){
+        console.log(response.cutOff+',,,,,'+response. grandtotal);
+        document.getElementById("couponDiscount").innerHTML =
+              "Rs." + response.cutOff;
+            document.getElementById("grandTotalAmount").innerHTML =
+            response. grandtotal;
+            document.getElementById("grandtotalinput").value =
+            response. grandtotal;
+      }else{
+        document.getElementById("CouponError").innerHTML =
+              response.couponmsg;
+      }
+    }
+  })
+}
+}
+
+
 </script>
+
+
+
+
+
+
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -253,7 +392,7 @@ const submit=(id)=>{
 
               if(response.message){
                 alert(response.message);
-              retiurn;              }
+              return;              }
                 if (response.cashOnDelivery) {
                    
                     Swal.fire({
@@ -312,75 +451,6 @@ const submit=(id)=>{
           rzpl.open();
 
 
-
-                }else if(response.paypal){
-
-
-                    
-
-                    paypal
-        .Buttons({
-          // Sets up the transaction when a payment button is clicked
-          createOrder: function (data, actions) {
-            return fetch("/api/orders", {
-              method: "post",
-              // use the "body" param to optionally pass additional order information
-              // like product ids or amount
-            })
-              .then((response) => response.json())
-              .then((order) => order.id);
-          },
-          // Finalize the transaction after payer approval
-          onApprove: function (data, actions) {
-            return fetch(`/api/orders/${data.orderID}/capture`, {
-              method: "post",
-            })
-              .then((response) => response.json())
-              .then((orderData) => {
-                // Successful capture! For dev/demo purposes:
-                console.log(
-                  "Capture result",
-                  orderData,
-                  JSON.stringify(orderData, null, 2)
-                );
-                var transaction =
-                  orderData.purchase_units[0].payments.captures[0];
-                alert(
-                  "Transaction " +
-                    transaction.status +
-                    ": " +
-                    transaction.id +
-                    "\n\nSee console for all available details"
-                );
-                // When ready to go live, remove the alert and show a success message within this page. For example:
-                // var element = document.getElementById('paypal-button-container');
-                // element.innerHTML = '<h3>Thank you for your payment!</h3>';
-                // Or go to another URL:  actions.redirect('thank_you.html');
-              });
-          },
-        })
-        .render("#paypal-button-container");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    //jiosdfjisdfjisdfjisdfjklsdfajkladfsjkladfjkasdf
 
                 }
             }

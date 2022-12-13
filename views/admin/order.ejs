@@ -11,12 +11,12 @@
         </div>
       </div>
     <div class="table-responsive text-nowrap">
-      <table class="table table-hover">
+      <table class="table table-hover w-auto small">
         <thead>
             
             <tr>
            
-            <th>User</th>
+              <th>user</th>
             <th>orderID</th>
             <th>paymentMethod</th>
             <th>Amount</th>
@@ -34,7 +34,24 @@
             <td> <%=order[i]._id%></td>
             <td><%=order[i].paymentMethod%></td>
             <td><%=order[i].total%></td>
-             <td><%=order[i].orderStatus%></td>  
+             <td>
+            
+            <%if(order[i].orderStatus=='Cancelled'){%>
+
+                <p style="color: red;">cancelled</p>
+
+              <%}else{%>
+              <select class="form-select" aria-label="Default select example" onchange="changeStatus('<%=order[i]._id%>')" name="track"
+              id="change<%=order[i]._id%>">
+                <option value="<%=order[i].orderStatus%>" selected><%=order[i].orderStatus%></option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="Order Confirmed">Order Confirmed</option>
+                <option value="shipped">shipped</option>
+                <option value="Delivered">Delivered</option>
+                <option value="shipped">shipped</option>
+              </select>
+            <%}%>
+            </td>  
              <td><%=order[i].date%></td>    
              <td><a href="/admin/orderDetails/<%=order[i]._id%>"><button type="button" class="btn btn-success">Details</button></a></td>
           </tr>  
@@ -44,5 +61,32 @@
     </div>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  function changeStatus(id){
+    let orderId=id
+let value=document.getElementById('change'+id).value
+
+axios.patch('changeStatus',{id:orderId,value:value}).then((e)=>{
+if(e.data.update){
+
+  Swal.fire({
+  position: 'center',
+  icon: 'success',
+  title: 'Your work has been saved',
+  showConfirmButton: false,
+  timer: 1500
+
+}).then(()=>{
+  location.reload()
+})}
+
+
+})
+  }
+</script>
 
 <!-- <%-include("../admin/layout/footer")%> -->

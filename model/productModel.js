@@ -30,7 +30,7 @@ const productSchema =mongoose.Schema(
             
         },
         quantity:{
-            type:String,
+            type:Number,
             // required:true,
         },  
         date:{

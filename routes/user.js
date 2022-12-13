@@ -18,7 +18,11 @@ const {
   resendotp,
   addToCart,
   deletecart,incQuantity,decQuantity,userprofile,addAddress,submitAddress,postcheckout,postVerifyPayment,paymentfailed,addAddresscheckout,deleteAddress,editAddress,searchproduct,
-  myOrders,myOrderDetails
+  myOrders,myOrderDetails,
+  applycoupon,
+  paypal1,
+  paypalorder,
+  cancleOrder,categoryFilter
 } = require("../controllers/userController");
 
 
@@ -30,7 +34,7 @@ const {userBlock}= require("../middleware/userblock");
 
 router.get("/",userHome);
 router.get("/details/:id",showDetails);
-router.get("/cart",userBlock,cart);
+router.get("/cart",userBlock,userSession,cart);
 router.get("/shop",shop);
 router.get("/checkout",userBlock, userSession,checkout);
 router.get("/contact", contact);
@@ -54,6 +58,7 @@ router.get('/submitAddress',userBlock,userSession,submitAddress)
 router.get('/deleteaddress/:id',userBlock,userSession,deleteAddress)
 router.get("/myorders",userBlock,userSession,myOrders)
 router.get('/myOrderDetails/:id',userBlock,userSession,myOrderDetails)
+router.get('/categoryFilter',categoryFilter)
 
 
 
@@ -72,6 +77,10 @@ router.post('/searchproduct',searchproduct)
 router.post('/checkout',userBlock,userSession,postcheckout)
 router.post('/verifyPayment',  postVerifyPayment)
 router.post('/paymentFailed',paymentfailed)
+router.post('/applycoupon',applycoupon)
+router.post("/api/orders",paypal1)
+router.post("/api/orders/:orderId/capture",paypalorder)
+router.get('/cancelOrder/:id',cancleOrder)
 
 
 

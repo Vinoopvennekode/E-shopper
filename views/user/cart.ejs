@@ -20,7 +20,7 @@
  <!-- Cart Start -->
  
 
-    <%if(cart.cartItem.length==0){%>
+    <%if(cart.cartItem.length===0){%>
         <div class="container-fluid  mt-100">
             <div class="row">
             
@@ -99,14 +99,7 @@
             </table>
         </div>
         <div class="col-lg-4">
-            <form class="mb-5" action="">
-                <div class="input-group">
-                    <input type="text" class="form-control p-4" placeholder="Coupon Code">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary">Apply Coupon</button>
-                    </div>
-                </div>
-            </form>
+            
             <div class="card border-secondary mb-5">
                 <div class="card-header bg-secondary border-0">
                     <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
@@ -139,7 +132,8 @@
 
  <!-- Cart End --> 
  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+ <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+ <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
  <script>
 
 
@@ -219,26 +213,39 @@ const incQuantity = (id, userId,price) => {
             }
         }) 
     }
-
+    
 function deletecart(proId,userId,total){
 console.log('jksdfakjghskjghfsdkjghsdfkjghsdfkjghs');
-     swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover ",
-  icon: "warning",
-  buttons: true,
-  dangerMode: true,
-})
-.then((willDelete) => {
-  if (willDelete) {
+
+Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+  if (result.isConfirmed) {
     axios.delete('/deletecart',{data:{proId:proId,userId:userId,total:total}}).then((e)=>{
     location.href='/cart'
 })
+    Swal.fire(
+      'Deleted!',
+      'Your file has been deleted.',
+      'success'
+    )
+  }
+})
+
+ 
+
+   
   } 
-});
+
 
            
-        }
+      
     
 
 

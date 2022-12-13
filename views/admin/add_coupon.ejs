@@ -1,0 +1,165 @@
+<%- include("../admin/layout/header") %>   
+
+<div class="px-4">
+    <div class="card my-4 ">
+        <h5 class="card-header">Add Coupons</h5>
+        <div class="card-body">
+          <form action="/admin/add_cuponpost" method="post"  onclick="return validateAddCoupon()" >
+          <div class="mb-3 row">
+            <label for="html5-text-input" class="col-md-2 col-form-label">Coupon CODE</label>
+            <div class="col-md-10">
+              <input class="form-control" name="code" type="text"  id="code" onkeyup="nullcode()" />
+              <small><span id="codeerror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label for="html5-search-input" class="col-md-2 col-form-label">Coupon Type</label>
+            <div class="col-md-10">
+                <input onclick="changeType('Percentage')" class="me-2" id="type" name="CouponType" type="radio" value="Percentage" checked><label class="form-label"  for="">Percentage</label><br>
+                <input onclick="changeType('Amount')" class="me-2" id="type" name="CouponType" type="radio" value="Amount"><label class="form-label" for="">Amount</label>
+             
+            </div>
+          </div>
+          
+          <div class="mb-3 row">
+            <label for="exampleFormControlInput1"  class="col-md-2 col-form-label"id="typeAmount" hidden class="form-label ">CUT-OFF Amount</label>
+            <label for="exampleFormControlInput1"  class="col-md-2 col-form-label"id="typePercentage" class="form-label ">CUT-OFF Percentage</label>
+            <div class="col-md-10">
+              <input class="form-control" name="cutOff" type="search"  id="cutOff"  onkeyup="nullcutOff()"/>
+              <small><span id="cutOfferror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
+          
+          <div class="mb-3 row">
+            <label for="html5-search-input" class="col-md-2 col-form-label">Min Amount of cart</label>
+            <div class="col-md-10">
+              <input class="form-control" name="minCartAmount" type="search"  id="minCartAmount"  onkeyup="nullminCartAmount()" />
+              <small><span id="minCartAmounterror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label for="html5-search-input" class="col-md-2 col-form-label">Max amount to redeem</label>
+            <div class="col-md-10">
+              <input class="form-control" name="maxRedeem" type="search"  id="maxRedeem"  onkeyup="nullmaxRedeem()" />
+              <small><span id="maxRedeemerror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
+      
+           <div class="mb-3 row">
+            <label for="html5-search-input" class="col-md-2 col-form-label">coupon count</label>
+            <div class="col-md-10">
+              <input class="form-control" type="search" name="couponCount"  id="couponCount" onkeyup="nullcouponCount()" />
+              <small><span id="couponCounterror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label for="html5-search-input" class="col-md-2 col-form-label">Expiry date</label>
+            <div class="col-md-10">
+              <input class="form-control" type="date" name="expirydate"  id="expirydate" onkeyup="nullexpirydate()" />
+              <small><span id="expirydateerror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
+         
+         
+          <div class="row">
+           
+            <div class="col-md-2 float-right">
+             
+                  <button id="confirm-btn" type="submit" class="btn btn-primary ">
+                      Submit
+                  </button>
+           
+              
+             </div>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+    
+    
+    <script>
+
+function changeType(type){
+    if(type == 'Amount'){
+      document.getElementById('typeAmount').hidden=false
+      document.getElementById('typePercentage').hidden=true
+    }else if(type == 'Percentage'){
+      document.getElementById('typeAmount').hidden=true
+      document.getElementById('typePercentage').hidden=false
+    }
+  }
+
+
+
+
+
+
+      function validateAddCoupon() {
+        const code = document.getElementById("code").value;
+        const cutOff = document.getElementById("cutOff").value;
+        const minCartAmount = document.getElementById("minCartAmount").value;
+        const maxRedeem = document.getElementById("maxRedeem").value;
+        const couponCount = document.getElementById("couponCount").value;
+        const expirydate = document.getElementById("expirydate").value;
+
+        let Return=true;
+        let letters=/^[a-zA-Z]$/;
+        if (code === "") {
+          document.getElementById("codeerror").innerHTML =
+            "Please enter title";
+          Return =false;
+        }if (cutOff=== "") {
+          document.getElementById("cutOfferror").innerHTML =
+            "Please enter cutOff";
+          Return =false;
+        }if (minCartAmount === "") {
+          document.getElementById("minCartAmounterror").innerHTML =
+            "Please enter minCartAmount";
+          Return =false;
+        }if (maxRedeem === "") {
+          document.getElementById("maxRedeemerror").innerHTML =
+            "Please enter your maxRedeem";
+          Return =false;
+        }
+        if (couponCount === "") {
+          document.getElementById("couponCounterror").innerHTML ="Please enter couponCount";
+          Return= false;
+        }
+        if (expirydate === "") {
+          document.getElementById("expirydateerror").innerHTML ="Please enter expiry date";
+          Return= false;
+        }
+        return Return;
+      }
+    
+      function nullcode() {
+        document.getElementById("codeerror").innerHTML =""
+      }
+      function nullcutOff() {
+        document.getElementById('cutOfferror').innerHTML=""
+    }
+    function nullminCartAmount() {
+        document.getElementById('minCartAmounterror').innerHTML=""
+    }
+    function nullmaxRedeem() {
+        document.getElementById('maxRedeemerror').innerHTML=""
+    }
+    function nullcouponCount() {
+        document.getElementById('couponCounterror').innerHTML=""
+    }function nullexpirydate() {
+        document.getElementById('expirydateerror').innerHTML=""
+    }
+      function onlyNumberKey(evt) {
+        // Only ASCII character in that range allowed
+        var ASCIICode = evt.which ? evt.which : evt.keyCode;
+        if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57)) return false;
+        return true;
+      }
+    </script>
+    
+    
+    
+    
+    
+    

@@ -21,7 +21,13 @@ const {
   unblockUser,
   addCategory,
   editCategory,
-  edit_Category,deleteCategory,banner,addbanner,addbannerpost,order,orderDeatails
+  edit_Category,deleteCategory,banner,addbanner,addbannerpost,order,orderDeatails,
+  coupon_view,add_coupon,
+  add_couponpost,
+  changeOrderStatus,
+  couponBlock,
+  couponActive,deletecoupon,
+  editCoupon
 } = require("../controllers/adminController");
 
 
@@ -42,6 +48,12 @@ router.get('/banner',banner)
 router.get('/add_banner',addbanner)
 router.get('/orders',order)
 router.get('/orderDetails/:id',orderDeatails)
+router.get('/coupon',coupon_view)
+router.get('/add-coupon',add_coupon)
+router.get('/blockCoupon/:id',couponBlock)
+router.get('/active/:id',couponActive)
+router.get('/deletecoupon/:id',deletecoupon)
+router.get('/editcoupon/:id',editCoupon)
 
 
 // post methods
@@ -53,6 +65,9 @@ router.post("/delete", deleteProduct);
 router.post("/addCategory", upload.array("imageurl", 3),addCategory)
 router.post('/editCategory/:id', upload.array("imageurl", 3),edit_Category)
 router.post('/add_banner',uploadbanner.array("imageurl", 3),addbannerpost)
+router.post('/add_cuponpost',add_couponpost)
+router.patch('/changeStatus',changeOrderStatus)
+
 
 
 

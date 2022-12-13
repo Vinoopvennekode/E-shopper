@@ -8,7 +8,7 @@
        <div class="mb-3 row">
         <label for="html5-text-input" class="col-md-2 col-form-label">Title</label>
         <div class="col-md-10">
-          <input onkeyup="nulltitle()" class="form-control" value="<%=product.title%>" name="title" type="text"  id="title" />
+          <input  class="form-control" value="<%=product.title%>" name="title" type="text"  id="title" onkeyup="nulltitle()"  />
           <small><span id="titleerror"   class=" cursor-pointer text-danger"></span></small>
         </div>
         </div>
@@ -16,7 +16,7 @@
        <div class="mb-3 row">
         <label for="html5-search-input" class="col-md-2 col-form-label">Price</label>
         <div class="col-md-10">
-          <input  onkeyup="nullprice()" onkeypress="return onlyNumberKey(event)" class="form-control" name="price" value="<%=product.price %> "type="search"  id="price" />
+          <input class="form-control" name="price" value="<%=product.price %> "type="search"  id="price"  onkeyup="nullprice()" onkeypress="return onlyNumberKey(event)" />
           <small><span id="priceerror"   class=" cursor-pointer text-danger"></span></small>
         </div>
         </div>

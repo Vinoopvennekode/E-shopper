@@ -1,0 +1,56 @@
+<%- include("../admin/layout/header") %>
+
+<div class="px-4 mt-3">
+  <div class="card">
+    <div class="card-header container-fluid">
+      <div class="row">
+        <div class="col-md-10">
+          <h3 class="w-75">COUPON</h3>
+        </div>
+        <div class="col-md-2 float-right">
+          <a href="/admin/add-coupon">
+            <button class="btn btn-primary">Add Coupon</button>
+          </a>
+        </div>
+      </div>
+    </div>
+    <%if(couponExist.length){%>
+        <p class="text-danger"><%=couponExist%></p>
+      <%}%>
+    <div class="table-responsive text-nowrap">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Coupon Code</th>
+            <th>Cut-Off</th>
+            <th>Coupon Left</th>
+            <th>Expiry Date</th>
+            <th>Status</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+
+        <tbody class="table-border-bottom-0">
+            <% for(var i=0; i<coupon.length; i++) { %>
+          <tr>
+            <td> <%=coupon[i].code%></td>
+            <td> <%=coupon[i].cutOff%></td>
+            <td><%=coupon[i].couponCount%></td>
+            <td><%=coupon[i]. expireDate.toLocaleDateString()%></td>
+            <td>
+             <% if(coupon[i].status=='ACTIVE'){%>
+              <a href="/admin/blockCoupon/<%=coupon[i]._id%>"><button type="button" class="btn btn-warning">BLOCK</button></a>
+            <%}else{%>
+              <a href="/admin/active/<%=coupon[i]._id%>"><button type="button" class="btn btn-success">ACTIVE</button></a>
+            <%}%>
+            </td>
+            <td><a href="/admin/editcoupon/<%=coupon[i]._id%>"><button type="button" class="btn btn-success">Edit</button></a></td>
+            <td><a href="/admin/deletecoupon/<%=coupon[i]._id%>"><button type="button" class="btn btn-danger"onClick="return confirm('are you sure to delete this ?')">Delete</button></a></td>
+          </tr>
+          <%}%>
+        </tbody>
+      </table> 
+    </div>
+  </div>
+</div>
