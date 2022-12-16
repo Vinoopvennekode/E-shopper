@@ -50,6 +50,7 @@ app.set('layout','./layout/layout')
 app.set('view engine','ejs')
 
 
+
 //navigation
 app.use('/',userRouter)
 app.use('/admin',adminRouter)

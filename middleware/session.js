@@ -3,11 +3,12 @@ const userSession= (req,res,next)=>{
    next();
 
     }else{
-        res.redirect("/signin");
+        res.redirect("/userLogin");
     }
 }
 const noSession= (req,res,next)=>{
     if(req.session.userlogin){
+        console.log('nosession');
         res.redirect("/");
 
     }else{

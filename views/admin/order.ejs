@@ -48,11 +48,11 @@
                 <option value="Order Confirmed">Order Confirmed</option>
                 <option value="shipped">shipped</option>
                 <option value="Delivered">Delivered</option>
-                <option value="shipped">shipped</option>
+                <option value="payment Refunded">payment Refunded</option>
               </select>
             <%}%>
             </td>  
-             <td><%=order[i].date%></td>    
+             <td><%=order[i]. time.toLocaleDateString()%></td>    
              <td><a href="/admin/orderDetails/<%=order[i]._id%>"><button type="button" class="btn btn-success">Details</button></a></td>
           </tr>  
          <%}%>

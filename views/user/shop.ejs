@@ -21,8 +21,15 @@
             <div class="col-lg-3 col-md-12">
                 <!-- Price Start -->
                 <div class="border-bottom mb-4 pb-4">
-                    <h5 class="font-weight-semi-bold mb-4">Filter by price</h5>
-                    <form>
+                    <h5 class="font-weight-semi-bold mb-4">Filter by Category</h5>
+                    <a href="/shop"><button type="button" class="btn btn-link">All</button></a>
+                    <% for(var i=0; i < category.length; i++) { %>
+
+                    <a href="/categorySelect/<%=category[i]._id%>"><button type="button" class="btn btn-link"><%=category[i].name%></button></a>
+                    <%}%>
+
+
+                    <!-- <form>
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                             <input onclick="categoryall()" type="checkbox" class="custom-control-input" checked id="categoryAll">
                             <label class="custom-control-label" for="price-all">All Price</label>
@@ -30,11 +37,11 @@
                         </div>
                         <% for(var i=0; i<category.length; i++) { %>
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox"onclick="categoryOnClick()" value="<%=category[i]._id%>" class="custom-control-input" name="categories" id="<%=category[i].name%>">
+                            <input type="checkbox"onclick="categoryOnClick()" value="<%=category[i]._id%>" class="custom" name="categories" id="<%=category[i].name%>">
                             <label class="custom-control-label" for="<%=category[i].name%>"><%=category[i].name%></label>
                             <span class="badge border ">152</span>
                         </div>
-                        <%}%>
+                        <%}%> -->
                         
                 </div>
                 <!-- Price End -->
@@ -125,6 +132,7 @@
     </div>
     <!-- Shop End -->
 
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         function addToCart(proId,price){
@@ -134,14 +142,24 @@
                 data:{proId:proId,price:price},
                 method:'POST',
                 success:(response)=>{
-                    
-    //                 Swal.fire({
-    //   position: 'top',
-    //   icon: 'success',
-    //   title: 'product added to cart',
-    //   showConfirmButton: false,
-    //   timer: 1500
-    // })
+                    if(response.success){
+                    Swal.fire({
+  position: 'top',
+  icon: 'success',
+  title: 'item added to cart',
+  showConfirmButton: false,
+  timer: 1500
+})
+                }else{
+                    Swal.fire({
+  position: 'top',
+  icon: 'warning',
+  title: 'please login',
+  showConfirmButton: false,
+  timer: 1500
+})
+                }
+    
                 }
             })
         }
@@ -219,13 +237,23 @@ $.ajax({
 
 
 function categoryall(){
-    let checkbox = document.getElementById('categoryAll')
-        if(checkbox.checked){
-        $(".category-checkbox").prop("checked", false);
-        checkbox.disabled=true
+        $("#categoryAll").prop("checked",false);
+        let allCheckBox=document.getElementById('categoryAll')
+         allCheckBox.disabled=false
+        $.ajax({
+            url:'/CategoryAll',
+        method:'get',
+        success:(response)=>{
+            let filterArea= document.getElementById('filterArea')
+               let html=null
+               products=response
+               console.log(products);
+
+        }
+        })
 }
 
-}
+
 
 
 

@@ -2,20 +2,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<div id="invoice">
 <div class="px-4 mt-3">
     <div class="card">
 <section class="confirmation_part padding_top">
@@ -23,7 +10,7 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="confirmation_tittle">
-          
+           
           </div>
         </div>
         <div class="col-lg-6 col-lx-4">
@@ -40,8 +27,14 @@
                 <p>Total: <%=order.total%></p>
               </li>
               <li>
-                <p>Payment Methord:  <%=order.paymentMethod
+                <p>Payment Method:  <%=order.paymentMethod
                     %></p>
+              </li>
+              <li>
+                <p>Payment Status:  <%=order.paymentStatus%></p>
+              </li>
+              <li>
+                <p>Order Status:  <%=order.orderStatus%></p>
               </li>
             </ul>
           </div>
@@ -131,3 +124,5 @@
     </div>
 </div>
 
+
+  

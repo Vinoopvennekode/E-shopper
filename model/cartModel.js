@@ -28,7 +28,7 @@ const cartSchema=mongoose.Schema(
         type:Number
     }
         
-    }
+    },{ timestamps: true }
 )
 
 const cart=mongoose.model('cart',cartSchema)

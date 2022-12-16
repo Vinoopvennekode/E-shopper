@@ -45,7 +45,9 @@ const userAddressSchema=new mongoose.Schema({
         default:false
     }}]
 
-})
+}
+,{ timestamps: true }
+)
 
 
 const userAddress=mongoose.model('userAddress',userAddressSchema)

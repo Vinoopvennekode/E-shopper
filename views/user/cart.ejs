@@ -138,15 +138,35 @@
 
 
 const incQuantity = (id, userId,price) => {
-    
-    if (document.getElementById("quantityBox" + id).value < 10) {
-      axios.patch("/quantityInc", { id: id ,userId:userId,price:price}).then((e) => {
+    const quantity=document.getElementById("quantityBox" + id).value
+    console.log(quantity);
+    if (document.getElementById("quantityBox" + id).value) {
+      axios.patch("/quantityInc", { id: id ,userId:userId,price:price,quantity:quantity}).then((e) => {
         if (e.data.response) {
           document.getElementById("quantityBox" + id).value = e.data.quantity;
           document.getElementById("totalBox" + id).innerHTML = e.data.total;
           document.getElementById("subtotal").innerHTML = e.data.subtotal;
           document.getElementById("discount").innerHTML = e.data.subtotal;
           location.reload()
+        }else{
+            console.log(e.data.response);
+            const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+  }
+})
+
+Toast.fire({
+  icon: 'error',
+  title: 'product is out of stock',
+})
+
         }
       });
     }

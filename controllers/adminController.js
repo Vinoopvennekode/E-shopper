@@ -17,8 +17,13 @@ const adminLogin = (req, res) => {
   try {
     const { userName, password } = req.body;
     if (userName === userNameDB && password === passwordDB) {
-      req.session.admin= true
+      req.session.admin=true
+      console.log(req.session.admin);
       res.redirect("/admin/admindash");
+    }else{
+      console.log("input err");
+      req.flash("inputErr", "Username or password incorrect");
+      res.redirect("/admin/");
     }
   } catch (error) {
     res.status(400)
@@ -32,22 +37,60 @@ const adminLogin = (req, res) => {
 
 // ADMIN LOGIN
 const login = (req, res) => {
-  try{if(req.session.admin){
-    res.redirect('/admin/admindash')
-}else{
-res.render("admin/login", { layout: "./layout/adminLayout" });
-}}catch(error){
+  try{
+res.render("admin/login", { layout: "./layout/adminLayout" , inputErr: req.flash("inputErr"),});
+}catch(error){
   res.status(400).json({error:'page not found'})
 }
 }
   
 
-const dash = (req, res) => {
-  try{if(req.session.admin){
-    res.render("admin/dashboard", { layout: "./layout/adminLayout" });
-  }else{
-    res.redirect('/admin/')
-  }}catch(error){
+const dash =async (req, res) => {
+  try{
+    let sales = 0;
+    let online = 0;
+    let offline = 0;
+    let transaction = 0;
+    let monthSalesCount = 0;
+    const totalSales = await orderModel.aggregate([{$match:{orderStatus:"Delivered"}},
+       
+    {
+      $group: {
+        _id: null,
+         totalPrice: { $sum: "$total" },
+      
+      },
+    },
+  ])
+    if (totalSales.length > 0) {
+      sales = totalSales[0].totalPrice;
+    }
+    const transactions = await orderModel.aggregate([
+      {
+        $group: {
+          _id: null,
+          price: { $sum: "$total" },
+        },
+      },
+    ]);
+    if (totalSales.length > 0) {
+       transaction=transactions[0].price;
+    }
+
+    
+      
+      
+
+    let newDate =  moment().format("MMMM Do YYYY") 
+    const totalUsers = await userModel.find({}).count();
+    const blockedUser = await userModel.find({ is_active: false }).count();
+    const totalorders = await orderModel.find({}).count();
+    const todayorders = await orderModel.find({date:newDate}).count()
+
+    res.render("admin/dashboard", { layout: "./layout/adminLayout",sales,transaction,totalUsers,blockedUser,totalorders,todayorders}); 
+    
+
+  }catch(error){
     res.status(400).json({error:'page not found'})
 
   }
@@ -100,6 +143,7 @@ const add_products = async (req, res) => {
 // PRODUCT VIEW
 const products = (req, res) => {
   try{
+    console.log(req.session.admin);
   productModel
     .find().populate("category").sort({date:1})
     .then((product) => {
@@ -415,7 +459,7 @@ const{ title1,title,url}=req.body
 
   const order=async(req,res)=>{
     try{
-const order= orderModel.find().populate('user').then((order)=>{
+const order= orderModel.find().populate('user').sort({date:-1}).then((order)=>{
   console.log(order);
   res.render('admin/order',{order})
 })
@@ -443,7 +487,7 @@ const orderId=req.params.id
 
 
   const coupon_view=async(req,res)=>{
-    await couponModel.find().then((coupon)=>{
+    await couponModel.find().sort({date:-1}).then((coupon)=>{
       res.render('admin/coupon_view',{coupon,couponExist: req.flash("couponExist")})
     })
    
@@ -460,10 +504,10 @@ const orderId=req.params.id
 
 
   const add_couponpost=async(req,res)=>{
-    const{code,CouponType,cutOff,minCartAmount,maxRedeem,couponCount,expirydate}=req.body
+    const{code,CouponType,cutOff,minCartAmount,maxRedeem,couponCount,expirydate,description}=req.body
 
 try{
-  if(code&&CouponType&&cutOff&&minCartAmount&&maxRedeem&&couponCount&&expirydate){
+  if(code&&CouponType&&cutOff&&minCartAmount&&maxRedeem&&couponCount&&expirydate&&description){
     console.log('coopppnn');
     console.log(req.body); 
   
@@ -478,7 +522,8 @@ try{
           maxRedeemAmount:maxRedeem,
           minCartAmount:minCartAmount,
           couponCount:couponCount,
-          expireDate:expirydate
+          expireDate:expirydate,
+          description:description
         })
         coupon.save();
         res.redirect('/admin/coupon')
@@ -511,7 +556,17 @@ try{
 
   }
 
+const editCouponpost=async(req,res)=>{
 
+  try{
+  console.log(req.params.id);
+  console.log(req.body);
+
+  await couponModel.findByIdAndUpdate(req.params.id,req.body).then(()=>{
+    res.redirect('/admin/coupon')
+  })
+}catch{}
+}
 
 const deletecoupon= async(req,res)=>{
   try{
@@ -541,6 +596,83 @@ console.log(orderId,value);
 
 res.json({update:true})
   }
+
+
+
+
+const totalOrder=async (req,res)=>{
+  console.log('total order');
+  const data = await orderModel.aggregate([
+    { $group: { _id: { $month: "$time" }, count: { $sum: 1 } } },
+    { $sort: { _id: 1 } },
+  ]);
+  // console.log('data'+data)
+  let counts = [];
+
+    data.forEach((ele) => {
+      counts.push(ele.count);
+    });
+    res.json({ status: true, counts });
+ 
+}
+
+
+
+const categorySale=async(req,res)=>{
+ 
+  try{
+    console.log('categorySale');
+    let data = await orderModel
+    .aggregate([{$match:{status:"Delivered"}},
+      { $unwind: "$products" },
+      {
+        $group: {
+          _id: "$products.product.category",
+          totalPrice: { $sum: "$products.total" },
+          count: { $sum: "$products.quantity" },
+        },
+      },
+    ])
+    .sort({ count: -1 });
+
+
+    let counts=[11, 16, 7, 3, 14]
+    res.json({ status: true, counts });
+
+  }catch{}
+
+
+
+
+}
+
+
+const   salesReport=async(req,res)=>{
+  try{
+
+    let data = await orderModel
+      .aggregate([{$match:{orderStatus:"Delivered"}},
+        { $unwind: "$products" },
+        {
+          $group: {
+            _id: "$products.product",
+            // name:"$products.$product.title",
+            totalPrice: { $sum: "$products.total" },
+            count: { $sum: "$products.quantity" },
+          },
+        },
+      ])
+      .sort({ count: -1 });
+
+    console.log(data);
+
+
+    res.render('admin/salesReport',{data})
+  }catch{}
+}
+
+
+
 module.exports = {
     
     
@@ -566,11 +698,16 @@ module.exports = {
   addbannerpost,order,orderDeatails,
   coupon_view,
   add_coupon,
-  add_couponpost,changeOrderStatus,
+  add_couponpost,
+  editCouponpost,changeOrderStatus,
   couponBlock,
   couponActive,
   deletecoupon,
-  editCoupon
+  editCoupon,
+  totalOrder,
+  categorySale,
+  salesReport
+  
 
   
 }

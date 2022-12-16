@@ -63,10 +63,13 @@ const userSchema =mongoose.Schema(
             type:String,
             required:true
         }
-    }]
+    }],
+    walletBalance:{
+        type:Number
+    }
     
         
-    }
+    },{ timestamps: true }
 )
 
 const user=mongoose.model('user',userSchema)

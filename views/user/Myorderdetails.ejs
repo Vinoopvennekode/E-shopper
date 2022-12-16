@@ -1,14 +1,16 @@
 <%- include("../user/layout/header") %>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- breadcrumb start-->
 
   <!--================ confirmation part start =================-->
-  <div class="">
+ 
     <div class="px-4 mt-3">
         
-  <section class="">
+   <section class="">
     <div class="container">
+      <div id="invoice" >
       <div class="row">
+        <button type="button" id="download-button" class="btn btn-primary" >Download invoice</button>
         
         <div class=" card border-0 bg-secondary mb-3 px-2 col-lg-6 col-lx-4">
           <div class="m-3 single_confirmation_details">
@@ -24,8 +26,14 @@
                   <p>Total: <%=order.total%></p>
                 </li>
                 <li>
-                  <p>Payment Methord:  <%=order.paymentMethod
+                  <p>Payment Method:  <%=order.paymentMethod
                       %></p>
+                </li>
+                <li>
+                  <p>Payment Status:  <%=order.paymentStatus%></p>
+                </li>
+                <li>
+                  <p>Order Status:  <%=order.orderStatus%></p>
                 </li>
               </ul>
           </div>
@@ -68,7 +76,7 @@
           </div>
         </div> -->
       </div>
-      <div class="">
+    
         
           <div class="card border-0 bg-secondary mb-3 order_details_iner">
             <div class="m-3">
@@ -97,7 +105,9 @@
                 </tr>
                 <tr>
                   <th colspan="3">shipping</th>
-                  <th><span></span></th>
+                  <%if(order.paymentMethod=='through wallet'){%>
+                  <th><span>deducted from wallet <%=order.deductwallet%></span></th>
+                <%}%>
                 </tr>
            
               </tbody>
@@ -107,19 +117,51 @@
                   <th scope="col">Total:$<%=order.total%></th>
                 </tr>
               </tfoot>
-            </table>
+            </table>                             
+          </div>               
+      
+          
           </div>
-          </div>
-        </div>
+      </div>
         <div class="d-flex justify-content-center">
-        <a href="/cancelOrder/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">Cancel order</button></a>
-          <button class="btn btn-primary py-2 px-4" type="submit" id="sendMessageButton">Continue shopping </button>
+          <%if(order.paymentStatus=='payment pending'&&order.paymentMethod=='razorpay'){%>
+            <a href="/refund/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">payment</button></a>
+          <%}else if((order.orderStatus=='Returned')|| (order.orderStatus=='Cancelled'&&order.paymentStatus=='Payment Completed')){%>
+            <a href="/refund/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">Request to refund</button></a>
+            <%}else if(order.orderStatus=='Delivered'&&order.paymentStatus=='Payment Completed'){%>
+        <a href="/productReturn/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">Product Return</button></a>
+        <%}else if(order.orderStatus=='payment Refunded') {%>
+
+          <%}else if(order.orderStatus=='Order Placed'||order.orderStatus=='order confirmed'){%>
+          <a href="/cancelOrder/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">cancle Order</button></a>
+          <%}%>
+          <a href="/"><button class="btn btn-primary py-2 px-4" type="submit" id="sendMessageButton">Continue shopping </button></a>
      </div>
         </div>
     </div>
    
-  </section>
-    </div></div>
+ 
+    </div>
+
+
+
+    
+<script>
+
+  const button = document.getElementById('download-button');
+  
+  
+  function generatePDF() {
+    // Choose the element that your content will be rendered to.
+    const element = document.getElementById('invoice');
+    // Choose the element and save the PDF for your user.
+    html2pdf().from(element).save();
+  }
+  
+  button.addEventListener('click', generatePDF);
+  
+  
+  </script>
  
     <%-include("../user/layout/footer")%>
   <!--================ confirmation part end =================-->

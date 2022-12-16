@@ -44,7 +44,7 @@ const productSchema =mongoose.Schema(
         imageurl:{
             type:Array,
         }
-    }
+    },{ timestamps: true }
       
 )
 

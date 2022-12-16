@@ -375,6 +375,7 @@ figure.zoom img {
     </div>
 </div>
 <!-- Products End -->
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     function addToCart(proId,price){
@@ -383,7 +384,23 @@ figure.zoom img {
             data:{proId:proId,price:price},
             method:'POST',
             success:(response)=>{
-                
+                if(response.success){
+                    Swal.fire({
+  position: 'top',
+  icon: 'success',
+  title: 'item added to cart',
+  showConfirmButton: false,
+  timer: 1500
+})
+                }else{
+                    Swal.fire({
+  position: 'top',
+  icon: 'warning',
+  title: 'please login',
+  showConfirmButton: false,
+  timer: 1500
+})
+                }
             }
         })
     }

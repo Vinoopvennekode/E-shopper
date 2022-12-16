@@ -136,7 +136,9 @@
               </div> -->
               <!-- /Logo -->
               <h4 class="mb-2">E SHOPPER-ADMIN PANEL</h4>
-             
+              <%if(inputErr.length){%>
+                <p class="text-danger"><%=inputErr%></p>
+                <%}%>
               <!-- <p class="mb-4">Please sign-in to your account and start the adventure</p> -->
 
               <form class="mb-3" action='/admin/admin_login' method="POST">

@@ -6,6 +6,10 @@ const CouponSchema = mongoose.Schema({
         type : String,
         required : true
     },
+    description:{
+        type:String,
+        required:true
+    },
     cutOff: {
         type : Number,
         required : true
@@ -39,7 +43,7 @@ const CouponSchema = mongoose.Schema({
         require : true
     }
 
-})
+},{ timestamps: true })
 
 const Coupon = mongoose.model("Coupon",CouponSchema)
 

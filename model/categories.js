@@ -13,7 +13,7 @@ const categorySchema=mongoose.Schema(
             type:String
         }
 
-}
+},{ timestamps: true }
 )
 
 const category=mongoose.model('category',categorySchema)

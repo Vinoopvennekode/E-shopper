@@ -15,11 +15,17 @@
               <h4 class="mb-2">Welcome to E SHOPPER</h4>
               <p class="mb-4">Please sign-in to your account</p>
             
-              <%if(blocking.length){%>
-                <p class="text-danger"><%=blocking%></p>
+              <%if(blocked.length){%>
+                <p class="text-danger"><%=blocked%></p>
               <%}%>
-              <%if(userExist.length){%>
-                <p class="text-danger"><%=userExist%></p>
+              <%if(passwordErr.length){%>
+                <p class="text-danger"><%=passwordErr%></p>
+              <%}%>
+              <%if(emailErr.length){%>
+                <p class="text-danger"><%=emailErr%></p>
+              <%}%>
+              <%if(allFill.length){%>
+                <p class="text-danger"><%=allFillErr%></p>
               <%}%>
               <p class="text-danger" id="errorid"></p>
               

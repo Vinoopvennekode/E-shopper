@@ -4,7 +4,7 @@
     <div class="card my-4 ">
         <h5 class="card-header">Edit Coupons</h5>
         <div class="card-body">
-          <form action="/admin/add_cuponpost" method="post"  onclick="return validateAddCoupon()" >
+          <form action="/admin/edit_cuponpost/<%=coupon._id%>" method="post"  onclick="return validateAddCoupon()" >
           <div class="mb-3 row">
             <label for="html5-text-input" class="col-md-2 col-form-label">Coupon CODE</label>
             <div class="col-md-10">
@@ -59,6 +59,13 @@
               <small><span id="expirydateerror"   class=" cursor-pointer text-danger"></span></small>
             </div>
           </div>
+          <div class="mb-3 row">
+            <label for="html5-search-input" class="col-md-2 col-form-label">Description</label>
+            <div class="col-md-10">
+              <input class="form-control" type="text"value="<%=coupon.description%>" name="description"  id="description" onkeyup="nulldescription()" />
+              <small><span id="descriptionerror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
          
          
           <div class="row">
@@ -102,6 +109,7 @@ function changeType(type){
         const maxRedeem = document.getElementById("maxRedeem").value;
         const couponCount = document.getElementById("couponCount").value;
         const expirydate = document.getElementById("expirydate").value;
+        const description = document.getElementById("description").value;
 
         let Return=true;
         let letters=/^[a-zA-Z]$/;
@@ -130,6 +138,10 @@ function changeType(type){
           document.getElementById("expirydateerror").innerHTML ="Please enter expiry date";
           Return= false;
         }
+        if (description === "") {
+          document.getElementById("descriptionerror").innerHTML ="Please enter description";
+          Return= false;
+        }
         return Return;
       }
     
@@ -149,6 +161,9 @@ function changeType(type){
         document.getElementById('couponCounterror').innerHTML=""
     }function nullexpirydate() {
         document.getElementById('expirydateerror').innerHTML=""
+    }
+    function nulldescription() {
+        document.getElementById('descriptionerror').innerHTML=""
     }
       function onlyNumberKey(evt) {
         // Only ASCII character in that range allowed

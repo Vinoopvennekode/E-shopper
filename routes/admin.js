@@ -24,49 +24,57 @@ const {
   edit_Category,deleteCategory,banner,addbanner,addbannerpost,order,orderDeatails,
   coupon_view,add_coupon,
   add_couponpost,
+  editCouponpost,
   changeOrderStatus,
   couponBlock,
   couponActive,deletecoupon,
-  editCoupon
+  editCoupon,totalOrder,categorySale,
+  salesReport,
+  vinoop
 } = require("../controllers/adminController");
+const { adminSession} = require("../middleware/admin-session");
 
 
 // get method
 router.get("/", login);
-router.get("/admindash", dash);
-router.get("/products", products);
-router.get("/add_products", addproducts);
+router.get("/admindash",adminSession, dash);
+router.get("/products",adminSession, products);
+router.get("/add_products",adminSession, addproducts);
 router.get("/logout", logout);
-router.get("/users", users);
-router.get("/unblock/:id", unblockUser);
-router.get("/block/:id", blockUser);
-router.get("/categories", category);
-router.get('/editcategory/:id',editCategory)
-router.get('/deleteCategory/:id',deleteCategory)
-router.get('/productDetails/:id',productDetails)
-router.get('/banner',banner)
-router.get('/add_banner',addbanner)
-router.get('/orders',order)
-router.get('/orderDetails/:id',orderDeatails)
-router.get('/coupon',coupon_view)
-router.get('/add-coupon',add_coupon)
-router.get('/blockCoupon/:id',couponBlock)
-router.get('/active/:id',couponActive)
-router.get('/deletecoupon/:id',deletecoupon)
-router.get('/editcoupon/:id',editCoupon)
+router.get("/users",adminSession, users);
+router.get("/unblock/:id",  adminSession,unblockUser);
+router.get("/block/:id",adminSession, blockUser);
+router.get("/categories",adminSession, category);
+router.get('/editcategory/:id',adminSession,editCategory)
+router.get('/deleteCategory/:id',adminSession,deleteCategory)
+router.get('/productDetails/:id',adminSession,productDetails)
+router.get('/banner',adminSession,banner)
+router.get('/add_banner',adminSession,addbanner)
+router.get('/orders',adminSession,order)
+router.get('/orderDetails/:id',adminSession,orderDeatails)
+router.get('/coupon',adminSession,coupon_view)
+router.get('/add-coupon',adminSession,add_coupon)
+router.get('/blockCoupon/:id',adminSession,couponBlock)
+router.get('/active/:id',adminSession,couponActive)
+router.get('/deletecoupon/:id',adminSession,deletecoupon)
+router.get('/editcoupon/:id',adminSession,editCoupon),
+router.get('/totalOrder',adminSession,totalOrder)
+router.get('/categorySale',adminSession,categorySale)
+router.get('/salesReport',adminSession,salesReport)
 
 
 // post methods
-router.post("/admin_login", adminLogin);
-router.post("/add_products", upload.array("imageurl", 3), add_products);
-router.post("/edit", productEditview);
-router.post("/editproduct/:id", upload.array("imageurl", 3), editproducts);
-router.post("/delete", deleteProduct);
-router.post("/addCategory", upload.array("imageurl", 3),addCategory)
-router.post('/editCategory/:id', upload.array("imageurl", 3),edit_Category)
-router.post('/add_banner',uploadbanner.array("imageurl", 3),addbannerpost)
-router.post('/add_cuponpost',add_couponpost)
-router.patch('/changeStatus',changeOrderStatus)
+router.post("/admin_login",adminLogin);
+router.post("/add_products", upload.array("imageurl", 3),adminSession, add_products);
+router.post("/edit",adminSession, productEditview);
+router.post("/editproduct/:id", upload.array("imageurl", 3), adminSession,editproducts);
+router.post("/delete", adminSession,deleteProduct);
+router.post("/addCategory", upload.array("imageurl", 3),adminSession,addCategory)
+router.post('/editCategory/:id', upload.array("imageurl", 3),adminSession,edit_Category)
+router.post('/add_banner',uploadbanner.array("imageurl", 3),adminSession,addbannerpost)
+router.post('/add_cuponpost',adminSession,add_couponpost)
+router.post('/edit_cuponpost/:id',adminSession,editCouponpost)
+router.patch('/changeStatus',adminSession,changeOrderStatus)
 
 
 

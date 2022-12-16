@@ -59,6 +59,13 @@
               <small><span id="expirydateerror"   class=" cursor-pointer text-danger"></span></small>
             </div>
           </div>
+          <div class="mb-3 row">
+            <label for="html5-search-input" class="col-md-2 col-form-label">Description</label>
+            <div class="col-md-10">
+              <input class="form-control" type="text" name="description"  id="description" onkeyup="nulldescription()" />
+              <small><span id="descriptionerror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
          
          
           <div class="row">
@@ -102,7 +109,7 @@ function changeType(type){
         const maxRedeem = document.getElementById("maxRedeem").value;
         const couponCount = document.getElementById("couponCount").value;
         const expirydate = document.getElementById("expirydate").value;
-
+        const description = document.getElementById("description").value;
         let Return=true;
         let letters=/^[a-zA-Z]$/;
         if (code === "") {
@@ -130,6 +137,10 @@ function changeType(type){
           document.getElementById("expirydateerror").innerHTML ="Please enter expiry date";
           Return= false;
         }
+        if (description === "") {
+          document.getElementById("descriptionerror").innerHTML ="Please enter description";
+          Return= false;
+        }
         return Return;
       }
     
@@ -149,6 +160,9 @@ function changeType(type){
         document.getElementById('couponCounterror').innerHTML=""
     }function nullexpirydate() {
         document.getElementById('expirydateerror').innerHTML=""
+    }
+    function nulldescription() {
+        document.getElementById('descriptionerror').innerHTML=""
     }
       function onlyNumberKey(evt) {
         // Only ASCII character in that range allowed

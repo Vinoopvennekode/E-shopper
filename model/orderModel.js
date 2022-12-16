@@ -48,13 +48,20 @@ const orderSchema=mongoose.Schema(
             type: String,
             required: true,
           },
-          track:{
+          track:{ 
             type: String,
           },
+          time:{
+            type:Date,
+            default:Date.now()
+          },
+          deductwallet:{
+            type:Number
+          }
         //   returnreason:{
         //     trpe:String,
         //   }
-    }
+    },{ timestamps: true }
 )
 
 
