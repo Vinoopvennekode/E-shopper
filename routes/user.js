@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const productModel=require('../model/productModel')
 const {
   userHome,
   showDetails,
@@ -42,21 +43,20 @@ const {
   categoryFilter,
   categoryAll,
   cartlenth,
-
-
-
+  addressBook,
+  pagination,
   postLogin,userLogin
 } = require("../controllers/userController");
 
 const { userSession, noSession } = require("../middleware/session");
-
+const {paginatedResults}=require('../middleware/pagination')
 const { userBlock } = require("../middleware/userblock");
 const { route } = require("./admin");
 // get methods
 
 router.get("/details/:id", showDetails);
 router.get("/cart", userBlock, userSession, cart);
-router.get("/shop", shop);
+router.get("/shop",paginatedResults(productModel), shop);
 router.get("/checkout", userBlock, userSession, checkout);
 router.get("/contact", contact);
 // router.get("/login",noSession,userLogin);
@@ -88,7 +88,8 @@ router.get('/productReturn/:id',productReturn)
 router.get('/cartlength',cartlenth)
 
 router.post("/CategoryAll", categoryAll);
-
+router.get('/addressBook',addressBook)
+router.get('/pagination',pagination)
 // post methods
 
 

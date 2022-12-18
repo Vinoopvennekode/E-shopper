@@ -14,6 +14,8 @@ const { response } = require("express");
 const ObjectId = require("mongodb").ObjectId;
 const mongoose = require("mongoose");
 const Razorpay = require("razorpay");
+const {paginatedResults}=require('../middleware/pagination')
+
 // import * as paypal from "./paypal_api.js";
 const paypal = require("../paypal_api");
 // var{paypal}=require('../paypal_api.js')
@@ -89,11 +91,12 @@ const showDetails = (req, res) => {
 const shop = async (req, res) => {
   try {
     const category = await categoryModel.find();
-
+      const product=res.paginatedResults
+      console.log(res.paginatedResults);
     let users = req.session.user;
-    await productModel.find().then((product) => {
-      res.render("user/shop", { users, product, category });
-    });
+
+      res.render("user/shop", { users, product, category,pagination:true });
+   ;
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -1490,6 +1493,37 @@ const categorySelect = async (req, res) => {
   } catch {}
 };
 
+const addressBook=async(req,res)=>{
+  try{
+     const users=req.session.user
+     const userId=req.session.user._id
+     let address = await addressModel.findOne({ user: userId });
+     let address1;
+     if (address) {
+       address1 = address.address;
+     } else {
+       address1 = [];}
+res.render('user/addressBook',{users,address1})
+
+  }catch{}
+
+}
+
+
+
+
+const pagination=(req,res)=>{
+
+
+
+  try{
+
+
+
+
+  }catch{}
+}
+
 module.exports = {
   userHome,
   showDetails,
@@ -1534,4 +1568,5 @@ module.exports = {
   cartlenth,
   postLogin,
   userLogin,
+  addressBook,pagination
 };

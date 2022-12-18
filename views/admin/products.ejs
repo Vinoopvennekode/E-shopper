@@ -8,6 +8,8 @@
   })
   });
   </script>    -->
+
+
 <div class="px-4 mt-3">
   <div class="card">
     <div class="card-header container-fluid">
@@ -26,10 +28,10 @@
         </div>
       </div>
     <div class="table-responsive text-nowrap">
-      <table class="table table-hover">
+      <table  id="tableId" style="width:100%" class="table table-hover table-striped ">
         <thead>
           <tr>
-            <th></th>
+            <th>No</th>
             <th>Title</th>
             <th>brand</th>
             <th>category</th>
@@ -161,5 +163,20 @@
     </div>
   </div>
 </div>
+
+
+<!-- 
+<script  type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script  type="text/javascript" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script  type="text/javascript" src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>  -->
+
+
+
+
+<script>
+$(document).ready(function () {
+    $('#tableId').DataTable();
+});
+</script>
 
 <!-- <%-include("../admin/layout/footer")%> -->
