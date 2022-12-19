@@ -32,7 +32,13 @@ const productSchema =mongoose.Schema(
         quantity:{
             type:Number,
             // required:true,
-        },  
+        }, 
+        offerPercentage:{
+            type:Number
+        } ,
+        offerPrice:{
+            type:Number
+        },
         date:{
             type:String,
             Default: Date.now

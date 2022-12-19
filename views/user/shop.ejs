@@ -117,11 +117,9 @@
                               </a>
                             </li>
                             <%}%>
-                            <%if(product.current.page==NaN){%>
-
-                                <%}else{%>
+                            
                             <li class="page-item active"><a class="page-link border-right" href="#"> <%= product.current.page %></a></li>
-                            <%}%>
+                          
                             <% if (product.next) { %>
                             <li class="page-item">
                               <a class="page-link" href="/shop?page=<%=product.next.page %>&limit=<%=product.next.limit%>" aria-label="Next">

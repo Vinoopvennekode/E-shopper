@@ -11,7 +11,10 @@ const categorySchema=mongoose.Schema(
         },
         discription:{
             type:String
-        }
+        },
+        offerPrecentage:{
+            type:Number
+        },
 
 },{ timestamps: true }
 )

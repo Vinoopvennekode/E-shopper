@@ -29,6 +29,25 @@
             </div>
           </div>
           <div class="mb-3 row">
+       
+            <label for="html5-email-input" class="col-md-2 col-form-label">Category</label>
+            <div class="col-md-10">
+              <select name="category"id="defaultSelect" class="form-select">
+              <% for(var i=0;i<category.length;i++){ %>
+              <option value="<%=category[i]._id%>"><%=category[i].name%></option>
+              <%}%>
+            </select>
+            </div>
+          
+          </div>
+          <div class="mb-3 row">
+            <label for="html5-search-input" class="col-md-2 col-form-label">Offer Percentage</label>
+            <div class="col-md-10">
+              <input class="form-control" name="offerPercentage" type="search"  id="offerPercentage" onkeyup="nullofferPercentage()" onkeypress="return onlyNumberKey(event)"/>
+              <small><span id="offerPercentageerror"   class=" cursor-pointer text-danger"></span></small>
+            </div>
+          </div>
+          <div class="mb-3 row">
             <label for="html5-email-input" class="col-md-2 col-form-label">Size</label>
             <div class="col-md-10">
               <select id="defaultSelect" name="size" class="form-select">

@@ -109,21 +109,44 @@ const add_products = async (req, res) => {
       size,
       color,
       quantity,
+      offerPercentage,
       date,
       category,
       brand,
       description,
     } = req.body;
-    if(title&&price&&size&&color&&quantity&&category&&brand&&description){
+    let offerPrice
+    if(title&&price&&size&&color&&quantity&&offerPercentage&&category&&brand&&description){
+
+
+      //offer checking......................................................................
+
+
+      if(offerPercentage!=0){
+        const catOffer= await categoryModel.findById(category,{_id:0,offerPrecentage:1})
+        const catOfferPercentage=catOffer.offerPrecentage
+        const catOfferPrice=Math.round(price-(price*catOfferPercentage)/100)
+        const proOfferPrice=Math.round(price-(price*offerPercentage)/100)
+        console.log(proOfferPrice,catOfferPercentage,catOfferPrice);
+        if(proOfferPrice<catOfferPrice){
+           offerPrice=proOfferPrice
+        }else{
+          offerPrice=catOfferPrice
+        }
+        
+        
+      }
     console.log(req.body);
     const newProduct = new productModel({
       title: title,
       category: category,
       price: price,
+      offerPrice:price,
       size: size,
       brand: brand,
       color: color,
-
+      offerPercentage:offerPercentage,
+      offerPrice:offerPrice,
       quantity: quantity,
       date: moment(date).format("MMMM Do YYYY, h:mm:ss a"),
       description: description,
@@ -145,7 +168,7 @@ const products = (req, res) => {
   try{
     console.log(req.session.admin);
   productModel
-    .find().populate("category").sort({date:1})
+    .find().populate("category").sort({date:-1})
     .then((product) => {
       res.render("admin/products", { layout: "./layout/adminLayout", product });
     
@@ -197,12 +220,13 @@ const productDetails=(req,res)=>{
 
 
 // PRODUCT EDIT VIEW
-const productEditview = (req, res) => {
+const productEditview = async(req, res) => {
   try{
+    const category = await categoryModel.find()
   productModel
     .findById(req.body.id)
     .then((product) => {
-      res.render("admin/editproducts", { layout: "./layout/adminLayout", product });
+      res.render("admin/editproducts", { layout: "./layout/adminLayout", product,category });
     })
     .catch((err) => {
       console.log(err);
@@ -218,14 +242,61 @@ const productEditview = (req, res) => {
 
 
 // 
-const editproducts = (req, res) => {
-  try{
+const editproducts =async (req, res) => {
+  console.log('ouyrtoiuweoiuwyoiuweyoiuyoiuwetyoiuywtoiuywtuiowywiiy');
+  try{const {
+    title,
+    price,
+    size,
+    color,
+    quantity,
+    offerPercentage,
+    date,
+    category,
+    brand,
+    description,
+  } = req.body;
+  let offerPrice
+   
   console.log(req.params.id);
   console.log(req.body);
-  const img = req.files;
-  if (img.length) req.body.imageurl = img;
 
-  productModel.findByIdAndUpdate(req.params.id, req.body).then(() => {
+  // const img = req.files;
+  // if (img.length) req.body.imageurl = img;
+
+console.log('first');       
+    const catOffer= await categoryModel.findById(category,{_id:0,offerPrecentage:1})
+    console.log(catOffer);
+    const catOfferPercentage=catOffer.offerPrecentage
+    console.log(catOfferPercentage);
+    const catOfferPrice=Math.round(price-(price*catOfferPercentage)/100)
+    console.log(catOfferPrice);
+    const proOfferPrice=Math.round(price-(price*offerPercentage)/100)
+    console.log(proOfferPrice)
+    console.log('asdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsd');
+    console.log(proOfferPrice,catOfferPercentage,catOfferPrice);
+    if(proOfferPrice<catOfferPrice){
+       offerPrice=proOfferPrice
+    }else{
+      offerPrice=catOfferPrice
+    }
+    
+    
+  
+console.log(catOfferPercentage,catOfferPrice,proOfferPrice);
+  productModel.findByIdAndUpdate(req.params.id,{title: title,
+    category: category,
+    price: price,
+    price:price,
+    size: size,
+    brand: brand,
+    color: color,
+    offerPercentage:offerPercentage,
+    offerPrice:offerPrice,
+    quantity: quantity,
+    date: moment(date).format("MMMM Do YYYY, h:mm:ss a"),
+    description: description,
+    imageurl: req.files,}).then(() => {
     res.redirect("/admin/products");
   });
 }catch (error) {
@@ -314,7 +385,7 @@ const category = (req, res) => {
 const addCategory = async(req, res) => {
 
         try{
-          const{name,discription}=req.body
+          const{name,discription,offerPercentage}=req.body
           const imageurl=req.files
           console.log(req.body);
           let regEx=new RegExp(name,'i')
@@ -325,10 +396,12 @@ console.log(category);
               const newcategory=new categoryModel({
                 name:name,
                 discription:discription,
+                offerPrecentage:offerPercentage,
                 imageurl:req.files
               })
               await newcategory.save();
               res.redirect('/admin/categories')
+              console.log('category');
             }else{
               req.flash('cateExist',"category already exist")
               res.redirect('/admin/categories')
@@ -357,15 +430,25 @@ const editCategory=(req,res)=>{
 
 
 
-const edit_Category = (req, res) => {
+const edit_Category = async(req, res) => {
   console.log(req.params.id);
   console.log(req.body);
   const img = req.files;
   if (img) req.body.imageurl = img;
 try{
-  categoryModel.findByIdAndUpdate(req.params.id,req.body).then(()=>{
-    res.redirect('/admin/categories')
-  })
+  const catId=req.params.id
+const{name,discription,offerPercentage}=req.body
+  await categoryModel.findByIdAndUpdate(req.params.id,{name:name,
+    discription:discription,
+    offerPrecentage:offerPercentage,
+    imageurl:req.files})
+
+    await productModel.updateMany({category:catId,offerPercentage:{$lt:offerPercentage}},
+      [{"$set":{"offerPrice":{$round:[{$sum:[{$divide:[{$multiply:["$price",-offerPercentage]},100]},"$price"]},0]}}}])
+    
+    
+      res.redirect('/admin/categories')
+  
   }catch(error){
     console.log(error);
     res.status(400).json({error:'page not found'})

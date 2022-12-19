@@ -64,6 +64,17 @@
                       autofocus
                     />
                   </div>
+                  <div class="mb-3 ">
+                    <label for="" class="form-label">Offer Percentage</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id=""
+                      name="offerPercentage"
+                      placeholder=""
+                      autofocus
+                    />
+                  </div>
                   <div class="mb-3">
                     <label for="formFileMultiple" class="form-label">Multiple files input example</label>
                     <input class="form-control" name="imageurl" type="file" id="formFileMultiple" multiple />
@@ -92,9 +103,10 @@
         
         <thead>
           <tr>
-            <th></th>
+            <th>image</th>
             <th>name</th>
             <th>discription</th>
+            <th>offer </th>
             <th></th>
             <th></th>
           </tr>
@@ -106,6 +118,7 @@
             <td><img width="40px" height="40px"src="/image<%= category[i].imageurl[0].filename %>" alt="...."></td>
             <td> <%=category[i].name%></td>
             <td> <%=category[i].discription%></td>
+            <td></td>
             <td><a href="/admin/editcategory/<%=category[i]._id%>"><button type="button" class="btn btn-success">Edit</button></a></td>
             <td><a href="/admin/deletecategory/<%=category[i]._id%>"><button type="button" class="btn btn-danger"onClick="return confirm('are you sure to delete this ?')">Delete</button></a></td>
           </tr>

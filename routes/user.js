@@ -49,7 +49,7 @@ const {
 } = require("../controllers/userController");
 
 const { userSession, noSession } = require("../middleware/session");
-const {paginatedResults}=require('../middleware/pagination')
+const {paginatedResults}=require('../utils/pagination')
 const { userBlock } = require("../middleware/userblock");
 const { route } = require("./admin");
 // get methods

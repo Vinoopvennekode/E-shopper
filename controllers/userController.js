@@ -14,7 +14,7 @@ const { response } = require("express");
 const ObjectId = require("mongodb").ObjectId;
 const mongoose = require("mongoose");
 const Razorpay = require("razorpay");
-const {paginatedResults}=require('../middleware/pagination')
+const {paginatedResults}=require('../utils/pagination')
 
 // import * as paypal from "./paypal_api.js";
 const paypal = require("../paypal_api");

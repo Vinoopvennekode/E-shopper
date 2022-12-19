@@ -2,7 +2,7 @@
 
 <div class="px-4">
     <div class="card my-4 ">
-        <h5 class="card-header">edit Product</h5>
+        <h5 class="card-header">edit Category</h5>
         <div class="card-body">
             <form class="mb-3" action="/admin/editCategory/<%=category._id%>" method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
@@ -25,10 +25,23 @@
                     name="discription"
                     placeholder=""
                     autofocus
+                    value="<%=category.discription%>"
+                  />
+                </div>
+                <div class="mb-3 ">
+                  <label for="" class="form-label">Offer Percentage</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id=""
+                    name="offerPercentage"
+                    placeholder=""
+                    autofocus
+                    value="<%=category.offerPrecentage%>"
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="formFileMultiple" class="form-label">Multiple files input example</label>
+                  <label for="formFileMultiple" class="form-label">Multiple files input </label>
                   <input class="form-control" name="imageurl" type="file" id="formFileMultiple" multiple />
                 <div class="mt-3 float-right">
                   <button class="btn btn-danger" type="submit">

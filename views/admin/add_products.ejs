@@ -34,6 +34,13 @@
       
       </div>
       <div class="mb-3 row">
+        <label for="html5-search-input" class="col-md-2 col-form-label">Offer Percentage</label>
+        <div class="col-md-10">
+          <input class="form-control" name="offerPercentage" type="search"  id="offerPercentage" onkeyup="nullofferPercentage()" onkeypress="return onlyNumberKey(event)"/>
+          <small><span id="offerPercentageerror"   class=" cursor-pointer text-danger"></span></small>
+        </div>
+      </div>
+      <div class="mb-3 row">
         <label for="html5-search-input" class="col-md-2 col-form-label">Brand</label>
         <div class="col-md-10">
           <input class="form-control" name="brand" type="search"  id="brand"  onkeyup="nullbrand()"/>
@@ -128,6 +135,8 @@
   function validateAddPRoducts() {
     const title = document.getElementById("title").value;
     const price = document.getElementById("price").value;
+    const offerPercentage  = document.getElementById("offerPercentage").value;
+
     const brand = document.getElementById("brand").value;
     // const size = document.getElementById("size").value;
     // const category = document.getElementById("category").value;
@@ -143,7 +152,11 @@
       Return =false;
     }if (price === "") {
       document.getElementById("priceerror").innerHTML =
-        "Please enter price";
+        "Please enter price";                                     
+      Return =false;
+    }if (  offerPercentage === "") {
+      document.getElementById("offerPercentageerror").innerHTML =
+        "Please enter offer Percentage";                                    
       Return =false;
     }if (brand === "") {
       document.getElementById("branderror").innerHTML =
@@ -189,13 +202,16 @@ function nullbrand() {
 //     document.getElementById('sizeerror').innerHTML=""
 // }
 // function nullcategory() {
-//     document.getElementById('categoryerror').innerHTML=""
+//     document.getElementById('categoryerror').innerHTML=""  
 // }
 // function nullcolor() {
 //     document.getElementById('colorerror').innerHTML=""
 // }
 function nullquantity() {
     document.getElementById('quantityerror').innerHTML=""
+}
+function nullofferPercentage() {
+    document.getElementById('offerPercentageerror').innerHTML=""
 }
 function nulldescription() {
     document.getElementById('descriptionerror').innerHTML=""
