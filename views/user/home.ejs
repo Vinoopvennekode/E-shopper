@@ -227,7 +227,7 @@
     <div class="card-footer d-flex justify-content-between bg-light border">
        <button class="btn btn-sm text-dark p-0"> <a href="/details/<%=product[i]._id%>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a></button>
         <!-- <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a> -->
-        <button  class="btn btn-sm text-dark p-0"onclick="addToCart('<%=product[i]._id%>','<%=product[i].price%>')"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</button>
+        <button  class="btn btn-sm text-dark p-0"onclick="addToCart('<%=product[i]._id%>','<%=product[i].price%>','<%=product[i].offerPrice%>')"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</button>
     </div>
     
 </div>
@@ -567,11 +567,11 @@
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    function addToCart(proId,price){
+    function addToCart(proId,price,offPrice){
         
         $.ajax({
             url:'/add-to-cart',
-            data:{proId:proId,price:price},
+            data:{proId:proId,price:price,offPrice:offPrice},
             method:'POST',
             success:(response)=>{
                 console.log(response);

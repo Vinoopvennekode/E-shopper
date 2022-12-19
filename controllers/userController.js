@@ -323,7 +323,11 @@ const addToCart = async (req, res) => {
     const userId = req.session.user._id;
     console.log(userId);
     const proId = req.body.proId;
-    const price = req.body.price;
+    let price
+    if(req.body.offPrice!=0){
+     price=req.body.offPrice
+    }else{
+     price = req.body.price;}
     console.log(req.body);
 
     const product = await productModel.findOne({ _id: proId });
