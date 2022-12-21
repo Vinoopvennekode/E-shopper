@@ -54,10 +54,13 @@
                     <span class="">0</span>
                 </a>
                 <a href="" class="btn border">
+                    <% if(!users){%>
                     <i class="fas fa-shopping-cart text-primary"></i>
-                   
                     <span  class="">0</span>
-                    
+                    <%}else{%>
+                        <i class="fas fa-shopping-cart text-primary"></i>
+                    <span  class=""><%=cartItem%></span>
+                    <%}%>
                 </a>
             </div>
         </div>
@@ -126,7 +129,7 @@
                                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><%=users.userName%></a>
                                     <div class="dropdown-menu ">
                                         <a href="/userprofile" class="dropdown-item">Profile</a>
-                                        <a href="logout" class="dropdown-item">Logout</a>
+                                        <a href="/logout" class="dropdown-item">Logout</a>
                                     </div>
                                 </div>
                                 <%}%>

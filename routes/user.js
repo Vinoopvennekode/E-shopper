@@ -49,14 +49,14 @@ const {
 } = require("../controllers/userController");
 
 const { userSession, noSession } = require("../middleware/session");
-const {paginatedResults}=require('../utils/pagination')
+const {paginatedResults,cartItem}=require('../utils/pagination')
 const { userBlock } = require("../middleware/userblock");
 const { route } = require("./admin");
 // get methods
 
-router.get("/details/:id", showDetails);
-router.get("/cart", userBlock, userSession, cart);
-router.get("/shop",paginatedResults(productModel), shop);
+router.get("/details/:id",cartItem(), showDetails);
+router.get("/cart", userBlock, userSession, cartItem(),cart);
+router.get("/shop",paginatedResults(productModel),cartItem(), shop);
 router.get("/checkout", userBlock, userSession, checkout);
 router.get("/contact", contact);
 // router.get("/login",noSession,userLogin);
@@ -66,7 +66,7 @@ router.get("/register", userResgister);
 
 router.get("/loginview", loginView);
 
-router.get("/", userHome);
+router.get("/",cartItem(), userHome);
 
 // user registraion post method
 router.post("/add-to-cart", userBlock, userSession, addToCart);
@@ -75,11 +75,11 @@ router.get("/logout", logout);
 router.get("/otp", otp);
 router.get("/resendotp", resendotp);
 router.get('/categorySelect/:id',categorySelect)
-router.get("/userprofile", userBlock, userSession, userprofile);
+router.get("/userprofile", userBlock, userSession, cartItem(),userprofile);
 router.get("/submitAddress", userBlock, userSession, submitAddress);
 router.get("/deleteaddress/:id", userBlock, userSession, deleteAddress);
-router.get("/myorders", userBlock, userSession, myOrders);
-router.get('/myWallet',myWallet)
+router.get("/myorders", userBlock, userSession,cartItem(), myOrders);
+router.get('/myWallet',cartItem(),myWallet)
 router.get("/myOrderDetails/:id", userBlock, userSession, myOrderDetails);
 router.get("/categoryFilter", categoryFilter);
 router.get('/refund/:id',paymentRefund)
@@ -88,7 +88,7 @@ router.get('/productReturn/:id',productReturn)
 router.get('/cartlength',cartlenth)
 
 router.post("/CategoryAll", categoryAll);
-router.get('/addressBook',addressBook)
+router.get('/addressBook',cartItem(),addressBook)
 router.get('/pagination',pagination)
 // post methods
 

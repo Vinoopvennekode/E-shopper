@@ -6,7 +6,7 @@
 
   <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
-      <div class="col-lg-8 mb-4 order-0">
+      <!-- <div class="col-lg-8 mb-4 order-0">
         <div class="card">
           <div class="d-flex align-items-end row">
             <div class="col-sm-7">
@@ -37,9 +37,54 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="col-lg-4 col-md-4 order-1">
         <div class="row">
+          <div class="col-lg-6 col-md-12 col-6 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <div
+                  class="card-title d-flex align-items-start justify-content-between"
+                >
+                  <div class="avatar flex-shrink-0">
+                    <img
+                      src="../assets/img/icons/unicons/chart-success.png"
+                      alt="chart success"
+                      class="rounded"
+                    />
+                  </div>
+                  <div class="dropdown">
+                    <button
+                      class="btn p-0"
+                      type="button"
+                      id="cardOpt3"
+                      data-bs-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div
+                      class="dropdown-menu dropdown-menu-end"
+                      aria-labelledby="cardOpt3"
+                    >
+                      <a class="dropdown-item" href="javascript:void(0);"
+                        >View More</a
+                      >
+                      <a class="dropdown-item" href="javascript:void(0);"
+                        >Delete</a
+                      >
+                    </div>
+                  </div>
+                </div>
+                <span class="fw-semibold d-block mb-1">Total Orders</span>
+                <h3 class="card-title mb-2"><%=totalorders%></h3>
+                <small class="text-success fw-semibold"
+                  ><i class="bx bx-up-arrow-alt"></i></small
+                >
+              </div>
+            </div>
+          </div>
           <div class="col-lg-6 col-md-12 col-6 mb-4">
             <div class="card">
               <div class="card-body">
@@ -93,6 +138,51 @@
                 >
                   <div class="avatar flex-shrink-0">
                     <img
+                      src="../assets/img/icons/unicons/chart-success.png"
+                      alt="chart success"
+                      class="rounded"
+                    />
+                  </div>
+                  <div class="dropdown">
+                    <button
+                      class="btn p-0"
+                      type="button"
+                      id="cardOpt3"
+                      data-bs-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div
+                      class="dropdown-menu dropdown-menu-end"
+                      aria-labelledby="cardOpt3"
+                    >
+                      <a class="dropdown-item" href="javascript:void(0);"
+                        >View More</a
+                      >
+                      <a class="dropdown-item" href="javascript:void(0);"
+                        >Delete</a
+                      >
+                    </div>
+                  </div>
+                </div>
+                <span class="fw-semibold d-block mb-1">Users</span>
+                <h3 class="card-title mb-2"><%=totalUsers%></h3>
+                <small class="text-success fw-semibold"
+                  ><i class="bx bx-up-arrow-alt"></i></small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-12 col-6 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <div
+                  class="card-title d-flex align-items-start justify-content-between"
+                >
+                  <div class="avatar flex-shrink-0">
+                    <img
                       src="../assets/img/icons/unicons/wallet-info.png"
                       alt="Credit Card"
                       class="rounded"
@@ -130,15 +220,58 @@
               </div>
             </div>
           </div>
+          <div class="row">
+            <div class="col-12 mb-4">
+              <div class="card">
+                <div class="card-body">
+                  <div
+                    class="d-flex justify-content-between flex-sm-row flex-column gap-3"
+                  >
+                    <div
+                      class="d-flex flex-sm-column flex-row align-items-start justify-content-between"
+                    >
+                      <div class="card-title">
+                        <h5 class="text-nowrap mb-2">Profile Report</h5>
+                        <span class="badge bg-label-warning rounded-pill"
+                          >Year 2021</span
+                        >
+                      </div>
+                      <div class="mt-sm-auto">
+                        <small class="text-success text-nowrap fw-semibold"
+                          ><i class="bx bx-chevron-up"></i> 68.2%</small
+                        >
+                        <h3 class="mb-0">$84,686k</h3>
+                      </div>
+                    </div>
+                    <div id="profileReportChart"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <!-- Total Revenue -->
       <div class="col-12 col-lg-8 order-2 order-md-3 order-lg-2 mb-4">
         <div class="card">
           <div class="row row-bordered g-0">
+            
             <div class="col-md-11">
+              <div class="float-right" style="width: 150px;">
+                <select class="form-select" aria-label="Default select example" id="Orders" onchange="totalRevanue()">
+                  <option value="30" selected>this month</option>
+                  <option value="7">this week</option>
+                  <option value="365">this year</option>
+                </select>
+              </div>
               <h5 class="card-header m-0 me-2 pb-3">Total Revenue</h5>
-              <canvas id="myChart"></canvas>
+              
+              <canvas id="barchart"></canvas>
+              
+             
+              <!-- <canvas id="myChart2"></canvas> -->
+          <canvas class="mt-5" id="lineChart"></canvas>
+
             
              <!-- <div class="col-md-4">  -->
               <!-- <div class="card-body">
@@ -207,7 +340,7 @@
         </div>
       </div>
       <!--/ Total Revenue -->
-      <div class="col-12 col-md-8 col-lg-4 order-3 order-md-2">
+      <!-- <div class="col-12 col-md-8 col-lg-4 order-3 order-md-2">
         <div class="row">
           <div class="col-6 mb-4">
             <div class="card">
@@ -296,8 +429,8 @@
               </div>
             </div>
           </div>
-          <!-- </div>
-    <div class="row"> -->
+          </div>
+    <div class="row">
           <div class="col-12 mb-4">
             <div class="card">
               <div class="card-body">
@@ -327,12 +460,14 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="row">
       <!-- Order Statistics -->
       <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
         <div class="card h-100">
           <!-- <canvas id="Chart12"></canvas> -->
+
+
           <!-- <div
             class="card-header d-flex align-items-center justify-content-between pb-0"
           >
@@ -695,55 +830,117 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
   <script>
+    window.addEventListener('load', function () {
+	totalRevanue()
+});
+  </script>
+
+  <script> 
+  
+
+  
+  let linegraph={   
+    
+  type: 'line',
+  data : {
+  labels:['week 1','week 2','week 3','week 4','week 5'],
+  datasets: [{
+    label: 'My First weeek',
+    data: [],
+    fill: false,
+    borderColor: 'rgb(75, 192, 192)',
+    tension: 0.1
+  }]
+}
+ }
+  
+  
+  
+  let bargraph={
+    type: "bar",
+    data: {
+      labels: ['week 1','week 2','week 3','week 4','week 5'],
+      datasets: [
+        {
+          label: "week",
+          data:[],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  }
+
+            
+
   
   function totalRevanue() {
-    return new Promise((resolve, reject) => {
+
+    const value=document.getElementById('Orders').value
+    
+    
       $.ajax({
         url: "/admin/totalOrder",
-        method: "get",
-
+        method: "post",
+        data:{value:value},
         success: (response) => {
-          dataCount = response.counts;
-          resolve(dataCount);
-          console.log(dataCount);
-          if (response.status) {
-            console.log(response.counts);
+            console.log(response);
+            if(value==30){
+            bargraph.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5']
+            linegraph.data.labels=['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5']
+
+             }else if(value==7){
+        bargraph.data.labels = ['day 1','day 2','day 3','day 4','day 5','day 6','day 7']
+        linegraph.data.labels=['day 1','day 2','day 3','day 4','day 5','day 6','day 7']
+
+            }
+
+            let data = []
+            for (let i = 0; i < response.counts.length; i++) {
+				data.push(response.counts[i])
+			    }
+
+          let data1=[]
+          for(let i=0;i<response.sales.length;i++){
+            data1.push(response.sales[i])
           }
+          bargraph.data.datasets[0].data = data
+          console.log('data'+data);
+          console.log('ljhdfkjshklj'+data1);
+
+          linegraph.data.datasets[0].data=data1
+          const ctx = document.getElementById("barchart").getContext('2d');
+          const chart2 = document.getElementById("lineChart").getContext('2d');
+                  new Chart(chart2,linegraph )
+              let mycart=new Chart(ctx,bargraph );
+            
         },
       });
-    });
+    
   }
 
-    const ctx = document.getElementById("myChart");
-    totalRevanue().then((data) => {
-    new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [
-          {
-            label: "SALES OF MONTH",
-            data: data,
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-          },
-        },
-      },
-    });
-  })
+
+   
 
 
-  function categorySale(){
+
+ 
+//----------------------------------------------START--------------------------------
+
+
+
+function totalsales() {
     return new Promise((resolve, reject) => {
       $.ajax({
-        url: "/admin/categorySale",
+        url: "/admin/totalSales",
         method: "get",
 
         success: (response) => {
@@ -751,54 +948,82 @@
           resolve(dataCount);
           console.log(dataCount);
           if (response.status) {
-            console.log(response.counts);
+            // console.log(response.counts);
           }
         },
       });
     });
   }
 
-  const chart = document.getElementById("Chart12");
-  categorySale().then((data1)=>{
+    totalsales().then((data1) => {
+   
+  
+  })
+
+
+
+
+//------------------------------------------------END----------------------------------
+
+  // function categorySale(){
+  //   return new Promise((resolve, reject) => {
+  //     $.ajax({
+  //       url: "/admin/categorySale",
+  //       method: "get",
+
+  //       success: (response) => {
+  //         dataCount = response.counts;
+  //         resolve(dataCount);
+  //         console.log(dataCount);
+  //         if (response.status) {
+  //           console.log(response.counts);
+  //         }
+  //       },
+  //     });
+  //   });
+  // }
+
+//   const chart = document.getElementById("Chart12");
+//   categorySale().then((data1)=>{
   
 
-const data = {
-labels: [
-  'Red',
-  'Green',
-  'Yellow',
-  'Grey',
-  'Blue'
-],
-datasets: [{
-  label: 'My First Dataset',
-  data: data1,
-  backgroundColor: [
-    'rgb(255, 99, 132)',
-    'rgb(75, 192, 192)',
-    'rgb(255, 205, 86)',
-    'rgb(201, 203, 207)',
-    'rgb(54, 162, 235)'
-  ]
-}]
-};
+// const data = {
+// labels: [
+//   'Red',
+//   'Green',
+//   'Yellow',
+//   'Grey',
+//   'Blue'
+// ],
+// datasets: [{
+//   label: 'My First Dataset',
+//   data: data1,
+//   backgroundColor: [
+//     'rgb(255, 99, 132)',
+//     'rgb(75, 192, 192)',
+//     'rgb(255, 205, 86)',
+//     'rgb(201, 203, 207)',
+//     'rgb(54, 162, 235)'
+//   ]
+// }]
+// };
 
 
 
 
-new Chart(chart, {
-  type: 'polarArea',
-data: data,
-options: {}
+// new Chart(chart, {
+//   type: 'polarArea',
+// data: data,
+// options: {}
 
-})
+// })
 
-  })
+//   })
   
 
 
 
   </script>
 
-  <%-include("../admin/layout/footer")%>
+  
 </div>

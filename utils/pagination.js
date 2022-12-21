@@ -1,3 +1,4 @@
+const cartModal=require('../model/cartModel')
 function paginatedResults(model) {
     return async (req, res, next) => {
       const page = parseInt(req.query.page)
@@ -34,6 +35,19 @@ function paginatedResults(model) {
   }
 
 
+function cartItem(){
+  return async (req, res, next) => {
+const userId=req.session.user
+let cartItem
+if(userId){
+const cart=await cartModal.findOne({ user: userId }).populate("cartItem.product")
+cartItem=cart.cartItem.length
+}else{
+cartItem=0
+}
+res.cartItem=cartItem
+next()
+  }
+}
 
-
-module.exports={paginatedResults}
+module.exports={paginatedResults,cartItem}

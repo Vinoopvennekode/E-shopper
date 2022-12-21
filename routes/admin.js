@@ -30,6 +30,7 @@ const {
   couponActive,deletecoupon,
   editCoupon,totalOrder,categorySale,
   salesReport,
+  totalSales,
   vinoop
 } = require("../controllers/adminController");
 const { adminSession} = require("../middleware/admin-session");
@@ -58,9 +59,10 @@ router.get('/blockCoupon/:id',adminSession,couponBlock)
 router.get('/active/:id',adminSession,couponActive)
 router.get('/deletecoupon/:id',adminSession,deletecoupon)
 router.get('/editcoupon/:id',adminSession,editCoupon),
-router.get('/totalOrder',adminSession,totalOrder)
+router.post('/totalOrder',adminSession,totalOrder)
 router.get('/categorySale',adminSession,categorySale)
 router.get('/salesReport',adminSession,salesReport)
+router.get('/totalSales',totalSales)
 
 
 // post methods

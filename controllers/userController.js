@@ -47,15 +47,16 @@ const paypalorder = async (req, res) => {
   res.json(captureData);
 };
 
-const userHome = (req, res) => {
+const userHome = async(req, res) => {
   try {
     console.log("home");
-
-    let users = req.session.user;
     const userId = req.session.user;
-    bannerModel.find().then((banner) => {
-      productModel.find().then((product) => {
-        res.render("user/home", { users, product, banner });
+const cartItem=res.cartItem
+console.log(cartItem);
+    let users = req.session.user;
+    await bannerModel.find().then((banner) => {
+     productModel.find().then((product) => {
+        res.render("user/home", { users, product, banner,cartItem});
       });
     });
   } catch (error) {
@@ -68,19 +69,15 @@ const showDetails = (req, res) => {
   if (users) {
     const userId = req.session.user._id;
     console.log(userId);
-    cartModal
-      .findOne({ user: userId })
-      .populate("cartItem.product")
-      .then((item) => {
-        console.log("lkjsdfhakljhsdkldfh" + item.cartItem.length);
+    const cartItem=res.cartItem
         productModel.findById(req.params.id).then((product) => {
           res.render("user/show-details", {
             users,
             product,
-            item: item.cartItem,
+            cartItem
           });
         });
-      });
+   
   } else {
     productModel.findById(req.params.id).then((product) => {
       res.render("user/show-details", { users, product });
@@ -94,8 +91,8 @@ const shop = async (req, res) => {
       const product=res.paginatedResults
       console.log(res.paginatedResults);
     let users = req.session.user;
-
-      res.render("user/shop", { users, product, category,pagination:true });
+    const cartItem=res.cartItem
+      res.render("user/shop", { users, product, category,pagination:true ,cartItem});
    ;
   } catch (error) {
     res.status(404).json({ error: "page not found" });
@@ -104,10 +101,11 @@ const shop = async (req, res) => {
 
 const checkout = async (req, res) => {
   let userId = req.session.user._id;
-  let usercart = await cartModal.findOne({ user: userId });
-  console.log("cart" + usercart);
-  if (usercart.cartItem) {
+  let cart = await cartModal.findOne({ user: userId });
+  
     try {
+      console.log(cart.cartItem[0].product.quantity);
+      const cartItem=res.cartItem
       let users = req.session.user;
 
       let cart = await cartModal
@@ -154,57 +152,21 @@ const checkout = async (req, res) => {
         product,
         subtotal,
         coupon,
+       cartItem
       });
     } catch (error) {
       console.log(error);
       res.status(404).json({ error });
     }
-  } else {
-    let userId = req.session.user._id;
-
-    let users = req.session.user;
-    let cart = await cartModal
-      .findOne({ user: userId })
-      .populate("cartItem.product");
-    let product = cart.cartItem;
-    let subtotal = cart.subtotal;
-    let address = await addressModel.findOne({ user: userId });
-    let address1;
-    if (address) {
-      address1 = address.address;
-    } else {
-      address1 = [];
-    }
-
-    let addressnew = await addressModel.aggregate([
-      {
-        $match: {
-          user: mongoose.Types.ObjectId(userId),
-        },
-      },
-      {
-        $project: {
-          address: {
-            $filter: {
-              input: "$address",
-              cond: {
-                $eq: ["$$this.default", true],
-              },
-            },
-          },
-        },
-      },
-    ]);
-    const add = addressnew[0].address;
-    console.log("elsesssss");
-    res.render("user/checkout", { users, address1, add, product, subtotal });
-  }
+  
 };
 
 const contact = (req, res) => {
   try {
     let users = req.session.user;
-    res.render("user/contact", { users });
+    const cartItem=res.cartItem
+    res.render("user/contact", { users, cartItem});
+
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -212,7 +174,8 @@ const contact = (req, res) => {
 
 const userResgister = (req, res) => {
   try {
-    res.render("user/register");
+    const cartItem=res.cartItem
+    res.render("user/register",cartItem);
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -250,6 +213,7 @@ const userRegisterPost = (req, res) => {
 };
 
 const logout = (req, res) => {
+  console.log('logouttttttt');
   req.session.destroy();
   res.redirect("/");
 };
@@ -426,10 +390,13 @@ const cart = async (req, res) => {
   try {
     let users = req.session.user;
     const userId = req.session.user._id;
+    const cartItem=res.cartItem
+
     const cart = await cartModal
       .findOne({ user: userId })
       .populate("cartItem.product");
-    res.render("user/cart", { users, cart });
+   
+      res.render("user/cart", { users, cart ,cartItem});
   } catch (error) {
     console.log(error.message);
     res.status(404).json({ error: "page not found" });
@@ -616,12 +583,13 @@ const userprofile = async (req, res) => {
     console.log(userId);
     let address = await addressModel.findOne({ user: userId });
     let address1;
+    const cartItem=res.cartItem
     if (address) {
       address1 = address.address;
     } else {
       address1 = [];
     }
-    res.render("user/userprofile", { users, address1 });
+    res.render("user/userprofile", { users, address1,cartItem });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -1239,23 +1207,25 @@ const paymentfailed = (req, res) => {
 const myWallet = async (req, res) => {
   let users = req.session.user;
   let userId = req.session.user._id;
+  const cartItem=res.cartItem
   const user = await userModel.findOne({ _id: userId });
   const walletAmount = user.walletBalance;
 
-  res.render("user/wallet", { users, walletAmount });
+  res.render("user/wallet", { users, walletAmount ,cartItem});
 };
 
 const myOrders = async (req, res) => {
   try {
     let users = req.session.user;
     let userId = req.session.user._id;
+    const cartItem=res.cartItem
     const order = await orderModel
       .find({ user: userId })
       .populate("user")
       .sort({ date: -1 })
       .then((order) => {
         // console.log(order);
-        res.render("user/myOrders", { users, order });
+        res.render("user/myOrders", { users, order,cartItem });
       });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
@@ -1265,11 +1235,12 @@ const myOrders = async (req, res) => {
 const myOrderDetails = (req, res) => {
   try {
     let users = req.session.user;
+    const cartItem=res.cartItem
     const order = orderModel
       .findById(req.params.id)
       .populate("products.product")
       .then((order) => {
-        res.render("user/Myorderdetails", { order, users });
+        res.render("user/Myorderdetails", { order, users,cartItem });
       });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
@@ -1501,13 +1472,14 @@ const addressBook=async(req,res)=>{
   try{
      const users=req.session.user
      const userId=req.session.user._id
+     const cartItem=res.cartItem
      let address = await addressModel.findOne({ user: userId });
      let address1;
      if (address) {
        address1 = address.address;
      } else {
        address1 = [];}
-res.render('user/addressBook',{users,address1})
+res.render('user/addressBook',{users,address1,cartItem})
 
   }catch{}
 

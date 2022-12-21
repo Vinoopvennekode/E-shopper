@@ -76,7 +76,7 @@
                                     <i class="fa fa-minus"></i>
                                     </button>
                                     <%}else{%>
-                                        <button style="visibility:hidden" class="btn btn-sm btn-primary btn-minus"onclick="decQuantity('<%=cart.cartItem[i].product._id%>','<%=users._id%>','<%=cart.cartItem[i].product.price%>','<%=cart.cartItem[i].quantity%>')" >
+                                        <button style="visibility:hidden" class="btn btn-sm btn-primary btn-minus"onclick="decQuantity('<%=cart.cartItem[i].product._id%>','<%=users._id%>','<%=cart.cartItem[i].product.price%>','<%=cart.cartItem[i].product.offerPrice%>','<%=cart.cartItem[i].quantity%>')" >
                                             <i class="fa fa-minus"></i>
                                             </button>
                                             <%}%>
@@ -84,7 +84,7 @@
                                 <input type="text" id="quantityBox<%=cart.cartItem[i].product._id%>" class="form-control form-control-sm bg-secondary text-center" value="<%=cart.cartItem[i].quantity%>">
                                 
                                 <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-plus" onclick="incQuantity('<%=cart.cartItem[i].product._id%>','<%=users._id%>','<%=cart.cartItem[i].product.price%>','<%=cart.cartItem[i].quantity%>')">
+                                    <button class="btn btn-sm btn-primary btn-plus" onclick="incQuantity('<%=cart.cartItem[i].product._id%>','<%=users._id%>','<%=cart.cartItem[i].product.price%>','<%=cart.cartItem[i].product.offerPrice%>','<%=cart.cartItem[i].quantity%>')">
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
@@ -137,11 +137,11 @@
  <script>
 
 
-const incQuantity = (id, userId,price) => {
+const incQuantity = (id, userId,price,offPrice) => {
     const quantity=document.getElementById("quantityBox" + id).value
     console.log(quantity);
     if (document.getElementById("quantityBox" + id).value) {
-      axios.patch("/quantityInc", { id: id ,userId:userId,price:price,quantity:quantity}).then((e) => {
+      axios.patch("/quantityInc", { id: id ,userId:userId,price:price,offPrice:offPrice,quantity:quantity}).then((e) => {
         if (e.data.response) {
           document.getElementById("quantityBox" + id).value = e.data.quantity;
           document.getElementById("totalBox" + id).innerHTML = e.data.total;
@@ -173,10 +173,10 @@ Toast.fire({
   }
 
 
-  const decQuantity = (id, userId,price) => {
+  const decQuantity = (id, userId,price,offPrice) => {
     
     if (document.getElementById("quantityBox" + id).value>1) {
-      axios.patch("/quantitydec", { id: id ,userId:userId,price:price}).then((e) => {
+      axios.patch("/quantitydec", { id: id ,userId:userId,offPrice:offPrice,price:price}).then((e) => {
         if (e.data.response) {
             console.log(e.data.response);
           document.getElementById("quantityBox" + id).value = e.data.quantity;
