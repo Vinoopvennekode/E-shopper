@@ -16,18 +16,20 @@
               
                 <h4 class="mb-2">Welcome to E SHOPPER</h4>
                 
-                <form id="formAuthentication" name="myform"class="mb-3" action="/otpVerify"  method="POST">
+                <form id="formAuthentication" name="myform"class="mb-3" action="/otpVerify"  method="POST" onclick="return validateotp()">
                   <div class="mb-3">
                     <label for="text" class="form-label">Verify Your Otp </label>
                     <input
                       type="text"
                       class="form-control"
-                      
+                       onkeyup="nullotp()"
                       name="otp"
+                      id="otp"
                       placeholder="Enter your otp "
                       autofocus
                       
                     />
+                    <small><span id="otperror"   class=" cursor-pointer text-danger"></span></small>
                   </div>
                   <%if(otperr.length){%>
                     <p class="text-danger"><%=otperr%></p>
@@ -62,6 +64,25 @@
           }
           timeleft -= 1;
         }, 1000);
+
+
+
+        function validateotp() {
+          const otp=document.getElementById('otp').value
+          let Return=true
+          if(otp===""){
+            document.getElementById('otperror').innerHTML='please enter your OTP'
+            Return= false;
+          }
+          return Return
+        }
+
+
+        function nullotp(){
+          document.getElementById('otperror').innerHTML=""
+        }
+
+
           </script>
       </body>
   

@@ -31,6 +31,7 @@ const {
   editCoupon,totalOrder,categorySale,
   salesReport,
   totalSales,
+  salesreport,
   vinoop
 } = require("../controllers/adminController");
 const { adminSession} = require("../middleware/admin-session");
@@ -62,6 +63,7 @@ router.get('/editcoupon/:id',adminSession,editCoupon),
 router.post('/totalOrder',adminSession,totalOrder)
 router.get('/categorySale',adminSession,categorySale)
 router.get('/salesReport',adminSession,salesReport)
+
 router.get('/totalSales',totalSales)
 
 
@@ -77,6 +79,7 @@ router.post('/add_banner',uploadbanner.array("imageurl", 3),adminSession,addbann
 router.post('/add_cuponpost',adminSession,add_couponpost)
 router.post('/edit_cuponpost/:id',adminSession,editCouponpost)
 router.patch('/changeStatus',adminSession,changeOrderStatus)
+router.patch('/salesreport',salesreport)
 
 
 

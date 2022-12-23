@@ -1,8 +1,11 @@
 
 
 <%- include("../admin/layout/header") %>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<div id="invoice">
+
 <div class="px-4 mt-3">
   <div class="card">
     <div class="card-header container-fluid">
@@ -14,23 +17,28 @@
            
             <button type="button" id="download-button" class="btn btn-primary" >Download report</button>
             
-            
            </div>
+           <p>start date</p>
+           <input id="start" type="date" value=""style="width: 150px;">
+           <p>end date  </p>
+           <input id="end" type="date"value="" style="width: 150px;">
+           <button class="pr-3" style="width: 150px;" onclick="salesreport()">search</button>
+
         </div>
       </div>
     <div class="table-responsive text-nowrap">
-      <table class="table table-hover">
+      <table class="table table-hover" id="invoice">
         <thead>
           <tr>
             <th scope="col">No</th>
-            <th scope="col">Product ID</th>
+            <th scope="col">Date</th>
             <th scope="col">Count</th>
             <th scope="col">Total</th>
           
           </tr>
         </thead>
         
-        <tbody class="table-border-bottom-0">  
+        <tbody class="table-border-bottom-0" id="tbody">  
             <% for( let i = 0; i < data.length; i++ ) { %>
           <tr>
             <th scope="row"><%= i+1 %> </th>
@@ -48,7 +56,7 @@
     </div>
   </div>
 </div>
-</div>
+
 
 
 <script>
@@ -66,5 +74,33 @@
     button.addEventListener('click', generatePDF);
     
     
+
+
+function salesreport(){
+  const startDate=document.getElementById('start').value
+  const endDate=document.getElementById('end').value
+  alert(startDate)
+  alert(endDate)
+
+  axios.patch("/admin/salesreport",{startDate:startDate,endDate:endDate}).then((e)=>{
+    console.log(e.data);
+    let html=''
+    let data=e.data.salesReport
+
+     for( let i = 0; i < data.length; i++ ) { 
+      html+=`
+      <tr>
+            <th scope="row"> ${i+1} </th>
+            <td>${data[i]._id } </td>
+            <td>${ data[i].count }</td>
+            <td>${ data[i].totalPrice }</td>
+          </tr> 
+      `
+     }
+     document.getElementById('tbody').innerHTML = html
+    
+  })
+}
+
     </script>
     

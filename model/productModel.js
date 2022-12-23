@@ -36,6 +36,14 @@ const productSchema =mongoose.Schema(
         offerPercentage:{
             type:Number
         } ,
+        review: {
+            type: Number,
+            default: 0
+        },
+        rating: {
+            type: Number,
+            default: 0
+        },
         offerPrice:{
             type:Number
         },

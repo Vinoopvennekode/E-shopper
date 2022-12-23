@@ -153,7 +153,7 @@ const add_products = async (req, res) => {
         color: color,
         offerPercentage: offerPercentage,
         quantity: quantity,
-        date: moment(date).format("MMMM Do YYYY, h:mm:ss a"),
+        date: moment(date).format("MMMM Do YYYY, h:mm:ss "),
         description: description,
         imageurl: req.files,
       });
@@ -289,7 +289,30 @@ const editproducts = async (req, res) => {
     } else {
       offerPrice = catOfferPrice;
     }
-
+    
+if(req.files==0){
+  
+  productModel
+      .findByIdAndUpdate(req.params.id, {
+        title: title,
+        category: category,
+        price: price,
+        price: price,
+        size: size,
+        brand: brand,
+        color: color,
+        offerPercentage: offerPercentage,
+        offerPrice: offerPrice,
+        quantity: quantity,
+        date: moment(date).format("MMMM Do YYYY, h:mm:ss a"),
+        description: description,
+        
+      })
+      .then(() => {
+        res.redirect("/admin/products");
+      });
+}else{
+  const img=req.files
     console.log(catOfferPercentage, catOfferPrice, proOfferPrice);
     productModel
       .findByIdAndUpdate(req.params.id, {
@@ -305,11 +328,11 @@ const editproducts = async (req, res) => {
         quantity: quantity,
         date: moment(date).format("MMMM Do YYYY, h:mm:ss a"),
         description: description,
-        imageurl: req.files,
+        imageurl:img,
       })
       .then(() => {
         res.redirect("/admin/products");
-      });
+      });}
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -705,7 +728,9 @@ const changeOrderStatus = async (req, res) => {
   const value = req.body.value;
   console.log(orderId, value);
   await orderModel.findByIdAndUpdate(orderId, { $set: { orderStatus: value } });
-
+if(value==='Delivered'){
+  await orderModel.findByIdAndUpdate(orderId,{$set:{paymentStatus:'payment Done'}})
+}
   res.json({ update: true });
 };
 
@@ -725,7 +750,7 @@ const totalOrder = async (req, res) => {
   console.log(moment(firstDay).format("DD-MM-YYYY"));
   let secondDate = new Date(firstDay.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-  // console.log(date+'            '+firstDay+'              '+secondDate);
+  console.log(date+'            '+firstDay+'              '+secondDate);
 
   let counts = [];
   let sales=[];
@@ -861,60 +886,63 @@ sales.push(salesData[0].totalPrice);
 
 console.log(firstDay+'     '+secondDate);
 
-  for (i = 1; i <= 12; i++) {
     let not = {};
     const data = await orderModel.aggregate([
-      { $match: { time: { $gte: firstDay, $lt: secondDate } } },
+      { $match: { time: { $gte: firstDay } } },
 
       {
         $group: {
-          _id: moment(firstDay).format("DD-MM-YY"),
+          _id: {$dateToString:{ format: "%m", date: "$time" }},
           counts: { $sum: 1 },
         },
       },
       { $sort: { _id: 1 } },
     ]);
 
-    if (data.length) {
-      counts.push(data[0].counts);
-    } else {
-      not.counts = 0;
-      counts.push(not);
-    }
-    firstDay = secondDate;
-    if (i == 11) {
-      secondDate = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 1);
-    } else {
-      secondDate = new Date(firstDay.getFullYear(),firstDay.getMonth() + 0,(i + 1) * 30);
-    }
-    console.log(firstDay+'      '+secondDate);
-  }
+    let counts = []
+                for (let i = 1; i <= 12; i++) {
+                    let aaa = true
+                    for (let k = 0; k < data.length; k++) {
+                        aaa = false
+                        if (data[k]._id == i) {
+                            counts.push(data[k].counts)
+                            break;
+                        } else aaa = true;
+                    }
+                    if (aaa) counts.push({count: 0 })
+                }
 
 
-//   for(i=1;i<=7;i++){
-//     let nothing = {};
-//     let salesData = await orderModel.aggregate([
-//       { $match: { $and:[{orderStatus: "Delivered" },{ time: { $gte:DaysAgo , $lt: todayDate } }]  } },
-//       {
-//           $group: {
-//               _id: moment(DaysAgo).format('DD-MM-YYYY'),
-//               totalPrice: { $sum: "$total" },
-//               count: { $sum: 1 }
-//           }
-//       },
-//   ]);
-//     if(salesData.length){
-// sales.push(salesData[0].totalPrice);
-//     }else{
-//       nothing.count=0
-//       sales.push(nothing)
-//     }
-    
-//     todayDate = DaysAgo
-//     DaysAgo = new Date(new Date().getTime() - (i + 1) * 24 * 60 * 60 * 1000);
+                const sale = await orderModel.aggregate([
+                  { $match: { $and:[{orderStatus: "Delivered" },{ time: { $gte:firstDay } }]  } },
+            
+                  {
+                    $group: {
+                      _id: {$dateToString:{ format: "%m", date: "$time" }},
+                      total:{$sum:"$total"},
+                      counts: { $sum: 1 },
+                    },
+                  },
+                  { $sort: { _id: 1 } },
+                ]);
+            
+                let sales = []
+                            for (let i = 1; i <= 12; i++) {
+                                let aaa = true
+                                for (let k = 0; k < sale.length; k++) {
+                                    aaa = false
+                                    if (sale[k]._id == i) {
+                                        sales.push(sale[k].total)
+                                        break;
+                                    } else aaa = true;
+                                }
+                                if (aaa) sales.push({ count: 0 })
+                            }
+            
 
-//   }
-//  console.log(sales);
+
+
+ console.log('sale'+sales);
   console.log(counts);
   res.json({ status: true, counts,sales});
 }
@@ -947,22 +975,47 @@ const categorySale = async (req, res) => {
 
 const salesReport = async (req, res) => {
   try {
-    let data = await orderModel
-      .aggregate([
-        { $match: { orderStatus: "Delivered" } },
-        { $unwind: "$products" },
-        {
-          $group: {
-            _id: "$products.product",
-            // name:"$products.$product.title",
-            totalPrice: { $sum: "$products.total" },
-            count: { $sum: "$products.quantity" },
-          },
-        },
-      ])
-      .sort({ count: -1 });
+    // let data = await orderModel
+    //   .aggregate([
+    //     { $match: { orderStatus: "Delivered" } },
+    //     { $unwind: "$products" },
+    //     {
+    //       $group: {
+    //         _id: "$products.product",
+    //         // name:"$products.$product.title",
+    //         totalPrice: { $sum: "$products.total" },
+    //         count: { $sum: "$products.quantity" },
+    //       },
+    //     },
+    //   ])
+    //   .sort({ count: -1 });
 
-    console.log(data);
+    // console.log(data);
+
+
+    var date = new Date();
+    var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    console.log(firstDay+'  '+lastDay);
+
+
+    const data=await orderModel.aggregate([
+      {$match:{
+        time:{$gte:firstDay,$lt:lastDay},
+        orderStatus:{$eq:"Delivered"}
+      }},
+      {
+        $group:{
+          _id:{$dateToString:{format:"%d-%m-%Y",date:"$time"}},
+          totalPrice:{$sum:"$total"},
+          count:{$sum:1}
+        }
+      }
+    ]).sort({date:1})
+    console.log(salesReport);
+
+
+
 
     res.render("admin/salesReport", { data });
   } catch {}
@@ -984,6 +1037,38 @@ const totalSales = async (req, res) => {
   console.log(counts);
   res.json({ status: true, counts });
 };
+
+
+const salesreport=async(req,res)=>{
+  console.log(req.body);
+  try {
+  const todayDate=new Date()
+  const startDate=new Date(req.body.startDate)
+  const endDate=new Date(req.body.endDate)
+
+  console.log(startDate+'  '+endDate);
+  if(startDate<=endDate){
+    const salesReport=await orderModel.aggregate([
+      {$match:{
+        time:{$gte:startDate,$lt:endDate},
+        orderStatus:{$eq:"Delivered"}
+      }},
+      {
+        $group:{
+          _id:{$dateToString:{format:"%d-%m-%Y",date:"$time"}},
+          totalPrice:{$sum:"$total"},
+          count:{$sum:1}
+        }
+      }
+    ])
+    console.log(salesReport);
+    res.json({status:true,salesReport})
+  }
+  
+} catch (error) {
+    
+}
+}
 
 module.exports = {
   login,
@@ -1023,4 +1108,5 @@ module.exports = {
   categorySale,
   salesReport,
   totalSales,
+  salesreport
 };

@@ -2,8 +2,48 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- breadcrumb start-->
 
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   <!--================ confirmation part start =================-->
- 
+  <style>
+    .modal-dialog-right-side {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: -ms-flexbox;
+      display: flex;
+      margin: 0 !important
+    }
+    /* component */
+    .star-rating {
+      display: flex;
+      flex-direction: row-reverse;
+      font-size: 1.5em;
+      justify-content: space-around;
+      padding: 0 .2em;
+      text-align: center;
+      width: 5em;
+    }
+    .star-rating input {
+      display: none;
+    }
+    .star-rating label {
+      color: #ccc;
+      cursor: pointer;
+    }
+    .star-rating :checked~label {
+      color: #f90;
+    }
+    .star-rating label:hover,
+    .star-rating label:hover~label {
+      color: #fc0;
+    }
+  </style>
+
+
+
     <div class="px-4 mt-3">
         
    <section class="">
@@ -95,6 +135,9 @@
                   <th colspan="2"><span><%=order.products[i].product.title%></span></th>
                   <th>x<%=order.products[i].quantity%></th>
                   <th> <span>$<%=order.products[i].total%></span></th>
+                  <th><button type="button" onclick="addReview('<%=order.products[i].product._id%>')" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                   review
+                  </button></th>
                 </tr>
                 <%}%>
               
@@ -104,7 +147,7 @@
                   <th> <span>$<%=order.total%></span></th>
                 </tr>
                 <tr>
-                  <th colspan="3">shipping</th>
+                  <th colspan="3"></th>
                   <%if(order.paymentMethod=='through wallet'){%>
                   <th><span>deducted from wallet <%=order.deductwallet%></span></th>
                 <%}%>
@@ -124,16 +167,28 @@
           </div>
       </div>
         <div class="d-flex justify-content-center">
-          <%if(order.paymentStatus=='payment pending'&&order.paymentMethod=='razorpay'){%>
-            <a href="/refund/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">payment</button></a>
-          <%}else if((order.orderStatus=='Returned')|| (order.orderStatus=='Cancelled'&&order.paymentStatus=='Payment Completed')){%>
+            <!-- <%if(order.orderStatus!='Cancelled'&&order.orderStatus!='Delivered'&&order.orderStatus!='Returned'&&order.orderStatus=='Order Confirmed'){%>
+              <a href="/cancelOrder/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">cancel Order</button></a>
+              
+             <%}else if(order.orderStatus=='Delivered'){%>
+        <a href="/productReturn/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">Product Return</button></a>
+              <%}else if(order.orderStatus=='Returned'&&order.paymentStatus!='Refunded'){%>
             <a href="/refund/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">Request to refund</button></a>
-            <%}else if(order.orderStatus=='Delivered'&&order.paymentStatus=='Payment Completed'){%>
+            <%}%>
+            <a href="/"><button class="btn btn-primary py-2 px-4" type="submit" id="sendMessageButton">Continue shopping </button></a> -->
+
+<!-- 
+          <%if(order.paymentStatus=='cancelled'&&order.paymentMethod=='razorpay'){%>
+            <a href="/refund/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">payment</button></a><%}%> -->
+            <%if(order.orderStatus!='Cancelled'&&order.orderStatus!='Delivered'&&order.orderStatus!='Returned'){%>
+              <a href="/cancelOrder/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">cancle Order</button></a>
+              
+          <% }else if(order.orderStatus=='Returned'&&order.paymentStatus!='payment Refunded'){%>
+            <a href="/refund/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">Request to refund</button></a>
+            <%}else if(order.orderStatus=='Delivered'){%>
         <a href="/productReturn/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">Product Return</button></a>
         <%}else if(order.orderStatus=='payment Refunded') {%>
 
-          <%}else if(order.orderStatus=='Order Placed'||order.orderStatus=='order confirmed'){%>
-          <a href="/cancelOrder/<%=order._id%>"><button class="btn btn-primary py-2 px-4 mr-3" type="submit" id="sendMessageButton">cancle Order</button></a>
           <%}%>
           <a href="/"><button class="btn btn-primary py-2 px-4" type="submit" id="sendMessageButton">Continue shopping </button></a>
      </div>
@@ -144,7 +199,53 @@
     </div>
 
 
+<!-- Button trigger modal -->
 
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="#" onsubmit="reviewww()">
+
+          <label for="" class="text-primary mb-0 fw-bold">Rate the product</label>
+          <div class="star-rating mt-0 mb-0 d-flex justify-content-between" onclick="removewarning()" style="width:200px;">
+            <input type="radio" id="5-stars" name="rating" value="5" />
+            <label for="5-stars" class="star">&#9733;</label>
+            <input type="radio" id="4-stars" name="rating" value="4" />
+            <label for="4-stars" class="star">&#9733;</label>
+            <input type="radio" id="3-stars" name="rating" value="3" />
+            <label for="3-stars" class="star">&#9733;</label>
+            <input type="radio" id="2-stars" name="rating" value="2" />
+            <label for="2-stars" class="star">&#9733;</label>
+            <input type="radio" id="1-star" name="rating" value="1" />
+            <label for="1-star" class="star">&#9733;</label>
+          </div>
+          <p class="text-danger mb-2 mt-0" id="removewarning" style="display:none;">Please add your rating also</p>
+          <label class=""> Title (optional) </label><br>
+          <input type="text" name="title" class="form-control">
+          <label class="" for="reviewId">Write your review</label><br>
+          <textarea name="review" class="form-control" id="reviewId" cols="30" rows="4" required></textarea>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+    </form>
+
+    </div>
+  </div>
+</div>
+
+
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 <script>
 
@@ -160,6 +261,60 @@
   
   button.addEventListener('click', generatePDF);
   
+
+
+
+
+  let iddd;
+  addReview = (id) => {
+    iddd = id
+  }
+  reviewww = async () => {
+    event.preventDefault()
+    const formData = new FormData(event.target);
+    const formProps = await Object.fromEntries(formData);
+    formProps.id = iddd
+    if (formProps.rating) {
+      axios.post('/review', formProps).then(async e => {
+        console.log(e.data);
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+        if (e.data.response === "login") location.href = "/login"
+        else if (e.data.error) {
+          await Toast.fire({
+            icon: 'error',
+            title: e.data.error
+          })
+        } else {
+          await Toast.fire({
+            icon: 'success',
+            title: 'Your review added successfully'
+          })
+          location.reload()
+        }
+      })
+    } else {
+      document.getElementById('removewarning').style.display = "block"
+    }
+  }
+  removewarning = () => {
+    document.getElementById('removewarning').style.display = "none"
+  }
+
+
+
+
+
+
   
   </script>
  

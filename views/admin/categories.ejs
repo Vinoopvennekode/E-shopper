@@ -118,7 +118,7 @@
             <td><img width="40px" height="40px"src="/image<%= category[i].imageurl[0].filename %>" alt="...."></td>
             <td> <%=category[i].name%></td>
             <td> <%=category[i].discription%></td>
-            <td></td>
+            <td><%=category[i].offerPrecentage%></td>
             <td><a href="/admin/editcategory/<%=category[i]._id%>"><button type="button" class="btn btn-success">Edit</button></a></td>
             <td><a href="/admin/deletecategory/<%=category[i]._id%>"><button type="button" class="btn btn-danger"onClick="return confirm('are you sure to delete this ?')">Delete</button></a></td>
           </tr>

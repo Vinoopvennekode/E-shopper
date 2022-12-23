@@ -220,7 +220,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <!-- <div class="row">
             <div class="col-12 mb-4">
               <div class="card">
                 <div class="card-body">
@@ -248,7 +248,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <!-- Total Revenue -->
@@ -265,12 +265,14 @@
                 </select>
               </div>
               <h5 class="card-header m-0 me-2 pb-3">Total Revenue</h5>
-              
+              <div id="barcharts">
               <canvas id="barchart"></canvas>
-              
+              </div>
              
               <!-- <canvas id="myChart2"></canvas> -->
+              <div id="linecharts">
           <canvas class="mt-5" id="lineChart"></canvas>
+              </div>
 
             
              <!-- <div class="col-md-4">  -->
@@ -847,7 +849,7 @@
   data : {
   labels:['week 1','week 2','week 3','week 4','week 5'],
   datasets: [{
-    label: 'My First weeek',
+    label: 'Total sales',
     data: [],
     fill: false,
     borderColor: 'rgb(75, 192, 192)',
@@ -864,7 +866,7 @@
       labels: ['week 1','week 2','week 3','week 4','week 5'],
       datasets: [
         {
-          label: "week",
+          label: "Total orders",
           data:[],
           borderWidth: 1,
         },
@@ -883,7 +885,7 @@
 
   
   function totalRevanue() {
-
+   
     const value=document.getElementById('Orders').value
     
     
@@ -901,6 +903,9 @@
         bargraph.data.labels = ['day 1','day 2','day 3','day 4','day 5','day 6','day 7']
         linegraph.data.labels=['day 1','day 2','day 3','day 4','day 5','day 6','day 7']
 
+            }else if(value==365){
+              bargraph.data.labels = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        linegraph.data.labels=['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
             }
 
             let data = []
@@ -917,11 +922,15 @@
           console.log('ljhdfkjshklj'+data1);
 
           linegraph.data.datasets[0].data=data1
+          document.getElementById('barcharts').innerHTML=`<canvas id="barchart"></canvas>`
+          document.getElementById('linecharts').innerHTML=`<canvas id="lineChart"></canvas>`
+            
           const ctx = document.getElementById("barchart").getContext('2d');
           const chart2 = document.getElementById("lineChart").getContext('2d');
-                  new Chart(chart2,linegraph )
-              let mycart=new Chart(ctx,bargraph );
-            
+                  window.myline=new Chart(chart2,linegraph )
+              window.mybar=new Chart(ctx,bargraph );
+              
+       
         },
       });
     

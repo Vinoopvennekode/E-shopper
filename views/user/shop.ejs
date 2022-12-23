@@ -1,4 +1,5 @@
 <%- include("../user/layout/header") %>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
@@ -25,7 +26,7 @@
                     <a href="/shop"><button type="button" class="btn btn-link">All</button></a>
                     <% for(var i=0; i < category.length; i++) { %>
 
-                    <a href="/categorySelect/<%=category[i]._id%>"><button type="button" class="btn btn-link"><%=category[i].name%></button></a>
+                    <button type="button" class="btn btn-link" onclick="category('<%=category[i]._id%>')"><%=category[i].name%></button>
                     <%}%>
 
 
@@ -52,8 +53,8 @@
 
 
             <!-- Shop Product Start -->
-            <div class="col-lg-9 col-md-12">
-                <div class="row pb-3">
+            <div class="col-lg-9 col-md-12" >
+                <div class="row pb-3" id="tbody">
                     <div class="col-12 pb-1">
                         <div class="d-flex align-items-center justify-content-between mb-4">
                             <form action="/searchproduct"  method="POST">
@@ -79,10 +80,10 @@
                             </div>
                         </div>
                     </div>
+
                     <% for(var i=0; i<product.results.length; i++) { %>
                        
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div id="filterArea">
+                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1 row"  > 
                         <div class="card product-item border-0 mb-4" >
                             <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
                                 <img class=" mx-auto d-block" width="200" height="300"src="/image<%= product.results[i].imageurl[0].filename %>" alt="">
@@ -90,20 +91,23 @@
                             <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                                 <h6 class="text-truncate mb-3"><%=product.results[i].title%></h6>
                                 <div class="d-flex justify-content-center">
-                                    <h6>$<%=product.results[i].price %></h6><h6 class="text-muted ml-2"><del>$123.00</del></h6>
+                                    <%if(product.results[i].offerPrice){%>
+                                        <h6>$<%=product.results[i].offerPrice %></h6><h6 class="text-muted ml-2"><del>$<%=product.results[i].price %></del></h6>
+                                        <%}else{%>
+                                            <h6>$<%=product.results[i].price %></h6><h6 class="text-muted ml-2"><del></del></h6>
+                                            <%}%>
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">
                                 <button class="btn btn-sm text-dark p-0"> <a href="/details/<%=product.results[i]._id%>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a></button>
-                                <button  class="btn btn-sm text-dark p-0"onclick="addToCart('<%=product.results[i]._id%>','<%=product.results[i].price%>')"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</button>
+                                <button  class="btn btn-sm text-dark p-0"onclick="addToCart('<%=product.results[i]._id%>','<%=product.results[i].price%>','<%=product.results[i].offerPrice%>')"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</button>
                             </div>
                             
-                        </div>
-                    </div>
                         
                     </div>
+                    </div>
                     <%}%>
-                   
+
                     
                     <div class="col-12 pb-1">
                        <%if(pagination==true){%>
@@ -142,14 +146,16 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        function addToCart(proId,price){
-            
-            $.ajax({
-                url:'/add-to-cart',
-                data:{proId:proId,price:price},
-                method:'POST',
-                success:(response)=>{
-                    if(response.success){
+    function addToCart(proId,price,offPrice){
+        
+        $.ajax({
+            url:'/add-to-cart',
+            data:{proId:proId,price:price,offPrice:offPrice},
+            method:'POST',
+            success:(response)=>{
+                console.log(response);
+                if(response.stock){
+                    console.log('jhjkfgjfgjkfgjkfgjkjkfg');
                     Swal.fire({
   position: 'top',
   icon: 'success',
@@ -158,18 +164,103 @@
   timer: 1500
 })
                 }else{
+                    console.log('jhdrhifghifghifgihfgihfghifghifghifghifghihihifhifhi');
                     Swal.fire({
   position: 'top',
   icon: 'warning',
-  title: 'please login',
+  title: 'item out of cart',
   showConfirmButton: false,
   timer: 1500
 })
                 }
+
+            }
+        })
+    }
+
+function category(id){
+    axios.patch('/categorySelecting',{id:id}).then((e)=>{
+        
+        let html
+        let data=e.data.product
     
-                }
-            })
+        for(i=0;i<data.length;i++){
+            html+=`    
+            <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
+                        
+                        <div class="card product-item border-0 mb-4" >
+                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                <img class=" mx-auto d-block" width="200" height="300"src="/image${data[i].imageurl[0].filename}" alt="">
+                            </div>
+                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                                <h6 class="text-truncate mb-3">${data[i].title}</h6>
+                                <div class="d-flex justify-content-center">
+                                    <h6>$${data[i].price }</h6><h6 class="text-muted ml-2"><del>$123.00</del></h6>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between bg-light border">
+                                <button class="btn btn-sm text-dark p-0"> <a href="/details/${data[i]._id}" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a></button>
+                                <button  class="btn btn-sm text-dark p-0"onclick="addToCart('${data[i]._id}','${data[i].price}')"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</button>
+                            </div>
+                    </div>
+                    </div>
+            `
         }
+     document.getElementById('tbody').innerHTML = html
+
+
+
+
+    })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function categoryOnClick(){

@@ -1,0 +1,98 @@
+const addToCart = async (req, res, next) => {
+  try {
+    const userId = req.session.user._id;
+    const proID = req.body.id;
+    const prod = await products.findById(proID);
+    const productprice = prod.price;
+    const offPrice = prod.offPrice;
+    let price;
+    if (offPrice != 0) {
+      price = offPrice;
+    } else {
+      price = productprice;
+    }
+
+    const productQuantity = prod.quantity;
+    const Cart = await cart.aggregate([
+      {
+        $match: {
+          user: mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $project: {
+          bucket: {
+            $filter: {
+              input: "$bucket",
+              cond: {
+                $eq: ["$$this.products", mongoose.Types.ObjectId(proID)],
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    const user = await cart.findOne({ user: userId });
+    if (!user) {
+      if (productQuantity > 0) {
+        const newCart = new cart({
+          user: userId,
+          bucket: [{ products: proID, total: price }],
+          subtotal: price,
+        });
+        newCart.save();
+        res.json({ response: true });
+      } else {
+        res.json({ response: false });
+      }
+    } else {
+      const cartOld = await cart.findOne({
+        user: userId,
+        "bucket.products": proID,
+      });
+
+      if (cartOld) {
+        const cartQuantity = Cart[0].bucket[0].quantity;
+
+        if (cartQuantity < productQuantity) {
+          await cart.updateOne(
+            {
+              user: userId,
+              "bucket.products": proID,
+            },
+            {
+              $inc: {
+                "bucket.$.quantity": 1,
+                "bucket.$.total": price,
+                subtotal: price,
+              },
+            }
+          );
+        } else {
+          res.json({ response: false });
+        }
+      } else {
+        if (productQuantity > 0) {
+          const cartArray = { products: proID, total: price };
+          await cart.findOneAndUpdate(
+            {
+              user: userId,
+            },
+            {
+              $push: { bucket: cartArray },
+              $inc: { subtotal: price },
+            }
+          );
+          res.json({ response: true });
+        } else {
+          res.json({ response: false });
+        }
+      }
+    }
+  } catch (error) {
+    next(error);
+    res.render("user/error");
+    console.log(error.message);
+  }
+};

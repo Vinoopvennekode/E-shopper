@@ -44,8 +44,9 @@ const {
   categoryAll,
   cartlenth,
   addressBook,
-  pagination,
-  postLogin,userLogin
+  catFilter,
+  
+  postLogin,userLogin,review
 } = require("../controllers/userController");
 
 const { userSession, noSession } = require("../middleware/session");
@@ -57,7 +58,7 @@ const { route } = require("./admin");
 router.get("/details/:id",cartItem(), showDetails);
 router.get("/cart", userBlock, userSession, cartItem(),cart);
 router.get("/shop",paginatedResults(productModel),cartItem(), shop);
-router.get("/checkout", userBlock, userSession, checkout);
+router.get("/checkout", userBlock, userSession,cartItem(), checkout);
 router.get("/contact", contact);
 // router.get("/login",noSession,userLogin);
 
@@ -89,7 +90,6 @@ router.get('/cartlength',cartlenth)
 
 router.post("/CategoryAll", categoryAll);
 router.get('/addressBook',cartItem(),addressBook)
-router.get('/pagination',pagination)
 // post methods
 
 
@@ -101,18 +101,20 @@ router.post("/edit_address/:id", userSession, editAddress);
 router.post("/add_addresscheckout", addAddresscheckout);
 router.post("/searchproduct", searchproduct);
 router.post("/checkout", userBlock, userSession, postcheckout);
-router.post("/verifyPayment", postVerifyPayment);
+router.post("/verifyPayment", userSession, postVerifyPayment);
 router.post("/paymentFailed", paymentfailed);
-router.post("/applycoupon", applycoupon);
-router.post("/api/orders", paypal1);
-router.post("/api/orders/:orderId/capture", paypalorder);
+router.post("/applycoupon", userSession, applycoupon);
+router.post("/api/orders", userSession, paypal1);
+router.post("/api/orders/:orderId/capture", userSession, paypalorder);
 router.get("/cancelOrder/:id", cancleOrder);
+router.post('/review',review)
 
 
-router.patch("/quantityInc", incQuantity);
-router.patch("/quantityDec", decQuantity);
+router.patch("/quantityInc", userSession, incQuantity);
+router.patch("/quantityDec", userSession, decQuantity);
+router.patch('/categorySelecting', userSession,catFilter)
 
-router.delete("/deletecart", deletecart);
+router.delete("/deletecart", userSession, deletecart);
 
 
 

@@ -8,6 +8,7 @@ const bannerModel = require("../model/bannerModel");
 const couponModel = require("../model/couponModel");
 const categoryModel = require("../model/categories");
 const walletModel = require("../model/walletModel");
+const reviewModel=require('../model/reviewModel')
 const bcrypt = require("bcrypt");
 const moment = require("moment");
 const { response } = require("express");
@@ -63,24 +64,29 @@ console.log(cartItem);
     res.status(404).json({ error: "page not found" });
   }
 };
-const showDetails = (req, res) => {
+const showDetails =async (req, res) => {
   let users = req.session.user;
   console.log(req.params.id);
+  const id=req.params.id
   if (users) {
     const userId = req.session.user._id;
     console.log(userId);
+    let review = [] = await reviewModel.find({ product: id }).populate("user").sort({ _id: -1 })
+    console.log(review);
     const cartItem=res.cartItem
         productModel.findById(req.params.id).then((product) => {
           res.render("user/show-details", {
             users,
             product,
-            cartItem
+            cartItem,review
           });
         });
    
   } else {
+    let review = [] = await reviewModel.find({ product: id }).populate("user").sort({ _id: -1 })
+
     productModel.findById(req.params.id).then((product) => {
-      res.render("user/show-details", { users, product });
+      res.render("user/show-details", { users, product,review });
     });
   }
 };
@@ -101,10 +107,23 @@ const shop = async (req, res) => {
 
 const checkout = async (req, res) => {
   let userId = req.session.user._id;
-  let cart = await cartModal.findOne({ user: userId });
-  
+  let cart1 = await cartModal.findOne({ user: userId }).populate( "cartItem.product");
+  console.log(cart);
     try {
-      console.log(cart.cartItem[0].product.quantity);
+      console.log(cart1.cartItem[0].product.quantity);
+      let check
+      let products=[]
+      for(i=0;i<cart1.cartItem.length;i++){
+        if(cart1.cartItem[i].quantity>cart1.cartItem[i].product.quantity){
+        check = true;
+        products.push(cart1.cartItem[i].product.title);}
+      }
+
+      if(check==true){
+        req.flash('empty',products+'  products not available in cart')
+        res.redirect('/cart')
+      }else{
+      console.log(products);
       const cartItem=res.cartItem
       let users = req.session.user;
 
@@ -153,7 +172,7 @@ const checkout = async (req, res) => {
         subtotal,
         coupon,
        cartItem
-      });
+      });}
     } catch (error) {
       console.log(error);
       res.status(404).json({ error });
@@ -284,6 +303,7 @@ const otpVerify = async (req, res) => {
 
 const addToCart = async (req, res) => {
   try {
+    console.log('carttttttttttttttttttttttttttt');
     const userId = req.session.user._id;
     console.log(userId);
     const proId = req.body.proId;
@@ -296,15 +316,44 @@ const addToCart = async (req, res) => {
 
     const product = await productModel.findOne({ _id: proId });
     console.log("quaaaaaaaantity" + product.quantity);
-    if (product.quantity > 1) {
+
+    const quantity = await cartModal.aggregate([
+      {
+        $match: {
+          user: mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $project: {
+          subtotal: 1,
+          cartItem: {
+            $filter: {
+              input: "$cartItem",
+              cond: {
+                $eq: ["$$this.product", mongoose.Types.ObjectId(proId)],
+              },
+            },
+          },
+        },
+      },
+    ]);
+    
       const user = await cartModal.findOne({ user: userId });
+
+      
       if (!user) {
+        if(product.quantity>0){
         const newCart = new cartModal({
           user: userId,
           cartItem: [{ product: proId, total: price }],
           subtotal: price,
         });
         newCart.save();
+        res.json({ response: true });
+      }else{
+        res.json({ response: false });
+      }
+
       } else {
         const cartOld = await cartModal.findOne({
           user: userId,
@@ -312,36 +361,12 @@ const addToCart = async (req, res) => {
         });
 
         if (cartOld) {
-          const quantity = await cartModal.aggregate([
-            {
-              $match: {
-                user: mongoose.Types.ObjectId(userId),
-              },
-            },
-            {
-              $project: {
-                subtotal: 1,
-                cartItem: {
-                  $filter: {
-                    input: "$cartItem",
-                    cond: {
-                      $eq: ["$$this.product", mongoose.Types.ObjectId(proId)],
-                    },
-                  },
-                },
-              },
-            },
-          ]);
+         
 
           const cartquantity = quantity[0].cartItem[0].quantity;
 
-          if (product.quantity <= cartquantity) {
-            let response = {
-              stock: true,
-            };
-            res.json(response);
-            console.log("mhfmhfgmhfgjhfgjhfgjhfjhf");
-          } else {
+          if (cartquantity<product.quantity) {
+            
             const updateCart = await cartModal.updateOne(
               {
                 user: userId,
@@ -355,8 +380,19 @@ const addToCart = async (req, res) => {
                 },
               }
             );
+            let response = {
+              stock: true,
+            };
+            res.json(response);
+          }else{
+            let response = {
+            
+              nonstock:true
+            };
+            res.json(response);
           }
         } else {
+          if(product.quantity>0){
           const cartArray = { product: proId, total: price };
           const updateCart = await cartModal.findOneAndUpdate(
             {
@@ -367,18 +403,13 @@ const addToCart = async (req, res) => {
               $inc: { subtotal: price },
             }
           );
+          res.json({ stock: true });
+        }else{
+          res.json({ nonstock: true });
         }
-        // let response = {
-        //   success:true,
-        // };
-        // res.json(response);
-      }
-    } else {
-      let response = {
-        quantity: true,
-      };
-      res.json(response);
-    }
+        }
+        
+    } 
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -396,7 +427,8 @@ const cart = async (req, res) => {
       .findOne({ user: userId })
       .populate("cartItem.product");
    
-      res.render("user/cart", { users, cart ,cartItem});
+      res.render("user/cart", { users, cart ,cartItem,empty:req.flash('empty')});     
+
   } catch (error) {
     console.log(error.message);
     res.status(404).json({ error: "page not found" });
@@ -640,7 +672,7 @@ const addAddress = async (req, res) => {
           ],
         });
         newAddress.save();
-        res.redirect("/userprofile");
+        res.redirect("/addressBook");
       } else {
         const newaddress = {
           name: name,
@@ -661,7 +693,7 @@ const addAddress = async (req, res) => {
             $push: { address: newaddress },
           }
         );
-        res.redirect("/userprofile");
+        res.redirect("/addressBook");
       }
     }
   } catch (error) {
@@ -672,15 +704,11 @@ const addAddress = async (req, res) => {
 const editAddress = async (req, res) => {
   try {
     const addressId = req.params.id;
-    const add = await addressModel.findOne(
-      { "address._id": addressId },
-      { _id: 1 }
-    );
 
     addressModel
       .updateMany(
         {
-          _id: mongoose.Types.ObjectId(add),
+          
           "address._id": mongoose.Types.ObjectId(addressId),
         },
         {
@@ -698,7 +726,7 @@ const editAddress = async (req, res) => {
         }
       )
       .then(() => {
-        res.redirect("/userprofile");
+        res.redirect("/addressBook");
       });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
@@ -726,6 +754,7 @@ const deleteAddress = async (req, res) => {
 };
 
 const addAddresscheckout = async (req, res) => {
+  console.log('jklsdajksdajksdajklsdajklsadjklsajklssajklasdjklsdajklsjklxczjklxzjklxcz');
   try {
     const {
       name,
@@ -770,6 +799,7 @@ const addAddresscheckout = async (req, res) => {
         });
         newAddress.save();
         res.redirect("/checkout");
+        
       } else {
         const newaddress = {
           name: name,
@@ -791,6 +821,7 @@ const addAddresscheckout = async (req, res) => {
           }
         );
         res.redirect("/checkout");
+        
       }
     }
   } catch (error) {
@@ -804,19 +835,20 @@ const submitAddress = async (req, res) => {
   console.log(req.session.user._id);
   let userId = req.session.user._id;
   try {
-    addressModel
+    await addressModel
       .findOneAndUpdate(
         { user: userId, "address.default": true },
         { $set: { "address.$.default": false } }
       )
-      .then(() => {});
+      
 
-    addressModel
+     await addressModel
       .findOneAndUpdate(
         { user: userId, "address._id": addressId },
         { $set: { "address.$.default": true } }
       )
-      .then(() => {});
+      console.log('haiiii');
+    res.redirect('/checkout')
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -974,31 +1006,20 @@ const postcheckout = async (req, res) => {
           );
         });
       } else if (req.body.paymentMethod === "paypal") {
-        // const userId = req.session.user._id;
-        // const products = cart.cartItem;
-        // const total = cart.subtotal;
-        // const paymentMethod = req.body.paymentMethod;
-        // const add = addressnew[0].address;
-        // const newOrder = new orderModel({
-        //   user: userId,
-        //   products: products,
-        //   total: total,
-        //   address: add,
-        //   paymentMethod,
-        //   paymentStatus: "payment pending",
-        //   track: "order confirmed",
-        //   orderStatus: "order confirmed",
-        //   date: moment(date).format("MMMM Do YYYY, h:mm:ss a"),
-        // });
-        // newOrder.save().then((result) => {
-        //   console.log(result);
-        // });
+        let response = { paypal };
+        res.json(response);
+        
       } else if (req.body.paymentMethod === "wallet") {
         const user = await userModel.findOne({ _id: userId });
         console.log(user.walletBalance);
         const walletBalance = user.walletBalance;
         console.log(total);
-        if (walletBalance < total) {
+        if(!walletBalance){
+          console.log('wallet balance zero');
+          let response = { message2: "wallet balance is zero" };
+        res.json(response);
+        }
+        else if (walletBalance < total) {
           const balancePayment = total - walletBalance;
           console.log(balancePayment);
           console.log(userId, products, total, add);
@@ -1013,17 +1034,15 @@ const postcheckout = async (req, res) => {
             orderStatus: "order confirmed",
             date: moment(date).format("MMMM Do YYYY, h:mm:ss a"),
           });
-          newOrder.save().then(async(result) => {
+          newOrder.save().then(async(result) => { 
             console.log(result);
+            console.log(result._id);
             let userOrderData = result;
             req.session.orderId = result._id;
             const orderId1=result.id
            if(coupon){
             var couponId=coupon._id}
 
-
-
-            
             id = result._id.toString();
             instance.orders.create(
               {
@@ -1051,13 +1070,12 @@ const postcheckout = async (req, res) => {
             total: total,
             address: add,
             paymentMethod: "through wallet",
-            paymentStatus: "payment pending",
+            paymentStatus: "payment done",
             track: "order confirmed",
             orderStatus: "order confirmed",
             date: moment(date).format("MMMM Do YYYY, h:mm:ss a"),
           });
           newOrder.save().then(async (result) => {
-            req.session.orderId = result._id;
             console.log("result id" + result._id);
             console.log("result" + result);
             const order = await orderModel.findOne({ _id: result._id });
@@ -1071,19 +1089,20 @@ const postcheckout = async (req, res) => {
               );
             });
             console.log("result" + result);
-           
-            const totalamount=total-walletBalance
+            const totalamount=walletBalance-total
+            console.log(totalamount);
             await userModel.findOneAndUpdate(
               {_id:req.session.user._id},
               {$inc:{
-                walletBalance: -totalamount}}
+                walletBalance: -total}}
             )
+            console.log(result._id);
             await orderModel.findByIdAndUpdate(
-              { _id:  req.body.orderId},
-              { $set: { deductwallet: totalamount } }
+              { _id:  result._id},
+              { $set: { deductwallet: total } }
             );
-            
-            if (coupon) {
+
+            if (coupon) { 
               await couponModel.findOneAndUpdate(
                 { _id: coupon._id },
                 { $inc: { couponCount: -1 } }
@@ -1488,17 +1507,65 @@ res.render('user/addressBook',{users,address1,cartItem})
 
 
 
-const pagination=(req,res)=>{
+
+  const review=async(req,res)=>{
+    console.log('sdasasdasaaasdsda');
+    console.log(req.body);
+    try {
+      let userId = req.session.user._id
+      let { rating, review, id, title } = req.body
+
+      rating = rating * 20
+      const reviews = {}
+      reviews.rating = rating
+      reviews.product = id
+      reviews.user = userId
+      reviews.review = review
+      reviews.title = title
+      const currentrat=rating
+      console.log(currentrat);
+
+      reviewModel.findOneAndReplace({ product: id, user: userId }, reviews).then(async rev => {
+        console.log(rev);
+          if (rev) {
+              let rat = {} = await productModel.findById(id, { _id: 0, rating: 1, review: 1 })
+              console.log(rat);
+              rating = (rat.rating + currentrat - rev.rating) / rat.review
+              
+              console.log(rat.rating+'   '+currentrat+'   '+rev.rating+'   '+rat.review);
+              console.log(rating);
+              await productModel.findByIdAndUpdate(id, { $set: { rating: rating } })
+              res.json()
+          }
+          else {
+              reviewModel.create(reviews).then(async () => {
+                  await productModel.findByIdAndUpdate(id, { $inc: { review: 1, rating: rating } })
+                  res.json()
+              }).catch(error => next(error))
+          }
+      }).catch(error => next(error))
+
+  } catch (error) {
+      
+
+  }
+  }
 
 
+  const catFilter=async(req,res)=>{
+    try {
+      console.log(req.body);
+      const catId=req.body.id
 
-  try{
+    const product = await productModel.find({ category: catId });
 
+console.log(product);
+res.json({status:true,product})
 
-
-
-  }catch{}
-}
+    } catch (error) {
+      
+    }
+  }
 
 module.exports = {
   userHome,
@@ -1544,5 +1611,6 @@ module.exports = {
   cartlenth,
   postLogin,
   userLogin,
-  addressBook,pagination
+  addressBook,review,
+  catFilter
 };

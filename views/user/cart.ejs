@@ -99,6 +99,11 @@
             </table>
         </div>
         <div class="col-lg-4">
+            <% if(empty.length>0){ %> 
+                <div  role="alert">
+                  <p class="text-danger"><%=empty%> </p>
+                </div>
+              <% } %>
             
             <div class="card border-secondary mb-5">
                 <div class="card-header bg-secondary border-0">
