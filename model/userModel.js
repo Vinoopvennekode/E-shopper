@@ -66,7 +66,13 @@ const userSchema =mongoose.Schema(
     }],
     walletBalance:{
         type:Number
-    }
+    },
+    walletHistory:[{
+        history:{
+            type:String,
+            
+        }
+    }]
     
         
     },{ timestamps: true }

@@ -79,7 +79,7 @@ router.post('/add_banner',uploadbanner.array("imageurl", 3),adminSession,addbann
 router.post('/add_cuponpost',adminSession,add_couponpost)
 router.post('/edit_cuponpost/:id',adminSession,editCouponpost)
 router.patch('/changeStatus',adminSession,changeOrderStatus)
-router.patch('/salesreport',salesreport)
+router.patch('/salesreport',adminSession,salesreport)
 
 
 

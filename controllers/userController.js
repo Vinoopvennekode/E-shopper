@@ -222,7 +222,8 @@ const userRegisterPost = (req, res) => {
     const { userName, email, password, mobile, date, block } = req.body;
     req.session.register = req.body;
     req.session.phone = mobile;
-    console.log(req.body);
+    console.log('reqbody');
+    console.log('print req.body',req.body);
     sendsms(mobile);
     res.redirect("/otp");
   } catch (error) {
@@ -982,7 +983,7 @@ const postcheckout = async (req, res) => {
         });
         newOrder.save().then((result) => {
           let userOrderData = result;
-          req.session.orderId = result._id;
+        
           const orderId1=result.id
           if(coupon){
             var couponId=coupon._id}
@@ -1094,7 +1095,7 @@ const postcheckout = async (req, res) => {
             await userModel.findOneAndUpdate(
               {_id:req.session.user._id},
               {$inc:{
-                walletBalance: -total}}
+                walletBalance: -total},$push:{walletHistory:{history:'Rs.'+total+' Debited on '+moment(Date.now()).format('DD-MM-YYYY')+' (orderId-'+result._id+')'}}}
             )
             console.log(result._id);
             await orderModel.findByIdAndUpdate(
@@ -1134,7 +1135,7 @@ const postVerifyPayment = async (req, res) => {
   try {
     // console.log("post verify payment");
 
-    console.log(req.body);
+    console.log(req.body.orderId);
     let razorpayOrderDataId = req.body["razorpayOrderData[razorpay_order_id]"];
 
     let paymentId = req.body["razorpayOrderData[razorpay_payment_id]"];
@@ -1164,7 +1165,7 @@ console.log('validateeeeeeeee');
           walletBalance: -req.body.ordertotal}}
       )}
 console.log('orderrrrrrrrrr');
-      const order = await orderModel.findOne({ _id: req.session.orderId });
+      const order = await orderModel.findOne({ _id: req.body.orderId });
 
       const findproId = order.products;
       findproId.forEach(async (el) => {
@@ -1173,7 +1174,7 @@ console.log('orderrrrrrrrrr');
           { $inc: { quantity: -el.quantity } }
         );
       });
-      const couponId =req.body.couponId;
+      const couponId =req.body.couponId;  
       console.log(',jghsadkjsdghalhgsakjsdga'+couponId);
       const coupon = await couponModel.findOne({ _id: couponId });
 
@@ -1222,15 +1223,19 @@ const paymentfailed = (req, res) => {
     res.status(404).json({ error: "page not found" });
   }
 };
-
+ 
 const myWallet = async (req, res) => {
-  let users = req.session.user;
+  let users = req.session.user; 
   let userId = req.session.user._id;
   const cartItem=res.cartItem
   const user = await userModel.findOne({ _id: userId });
-  const walletAmount = user.walletBalance;
+  console.log(user);
+   const walletAmount = user.walletBalance;
+  const walletHistory=user.walletHistory
+  const length=user.walletHistory.length
+  console.log(walletHistory);
 
-  res.render("user/wallet", { users, walletAmount ,cartItem});
+  res.render("user/wallet", { users, walletHistory,length,walletAmount,cartItem});
 };
 
 const myOrders = async (req, res) => {
@@ -1369,7 +1374,8 @@ const paymentRefund = async (req, res) => {
 
   const refund = await userModel.findOneAndUpdate(
     { _id: userId },
-    { $inc: { walletBalance: totalPrice } }
+    { $inc: { walletBalance: totalPrice },$push:{walletHistory:{history:'Rs.'+totalPrice+' Credited on '+moment(Date.now()).format('DD-MM-YYYY')+' (orderId-'+orderId+')'}} }
+    
   );
   console.log(refund);
 
@@ -1387,7 +1393,9 @@ const productReturn = async (req, res) => {
       $set: { orderStatus: "Returned" },
     });
     res.redirect(`/myOrderDetails/${req.params.id}`);
-  } catch {}
+  }  catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 };
 
 const categoryFilter = async (req, res) => {
@@ -1405,7 +1413,9 @@ const categoryFilter = async (req, res) => {
         };
         res.json(response);
       });
-  } catch {}
+  }  catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 };
 
 const categoryAll = async (req, res) => {
@@ -1453,7 +1463,9 @@ const postLogin = async (req, res) => {
       req.flash("allFill", "fill all input");
       res.redirect("/userLogin");
     }
-  } catch {}
+  }  catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 };
 
 const userLogin = (req, res) => {
@@ -1484,7 +1496,9 @@ const categorySelect = async (req, res) => {
     const category = await categoryModel.find();
     console.log("category              " + category);
     res.render("user/shop", { users, product, category });
-  } catch {}
+  }  catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 };
 
 const addressBook=async(req,res)=>{
@@ -1500,7 +1514,9 @@ const addressBook=async(req,res)=>{
        address1 = [];}
 res.render('user/addressBook',{users,address1,cartItem})
 
-  }catch{}
+  } catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 
 }
 
@@ -1530,7 +1546,8 @@ res.render('user/addressBook',{users,address1,cartItem})
           if (rev) {
               let rat = {} = await productModel.findById(id, { _id: 0, rating: 1, review: 1 })
               console.log(rat);
-              rating = (rat.rating + currentrat - rev.rating) / rat.review
+              // rating = (rat.rating + currentrat - rev.rating) / rat.review
+              rating=((rat.rating*rat.review)-rev.rating+currentrat)/rat.review
               
               console.log(rat.rating+'   '+currentrat+'   '+rev.rating+'   '+rat.review);
               console.log(rating);
@@ -1539,15 +1556,15 @@ res.render('user/addressBook',{users,address1,cartItem})
           }
           else {
               reviewModel.create(reviews).then(async () => {
+                
                   await productModel.findByIdAndUpdate(id, { $inc: { review: 1, rating: rating } })
                   res.json()
               }).catch(error => next(error))
           }
       }).catch(error => next(error))
 
-  } catch (error) {
-      
-
+  }  catch (error) {
+    res.status(404).json({ error: "page not found" });
   }
   }
 
@@ -1562,10 +1579,12 @@ res.render('user/addressBook',{users,address1,cartItem})
 console.log(product);
 res.json({status:true,product})
 
-    } catch (error) {
-      
+    }  catch (error) {
+      res.status(404).json({ error: "page not found" });
     }
   }
+
+
 
 module.exports = {
   userHome,

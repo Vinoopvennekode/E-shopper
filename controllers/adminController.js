@@ -675,7 +675,9 @@ const add_couponpost = async (req, res) => {
     } else {
       console.log("enter all input");
     }
-  } catch {}
+  }  catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 };
 
 const couponActive = async (req, res) => {
@@ -703,14 +705,18 @@ const editCouponpost = async (req, res) => {
     await couponModel.findByIdAndUpdate(req.params.id, req.body).then(() => {
       res.redirect("/admin/coupon");
     });
-  } catch {}
+  } catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 };
 
 const deletecoupon = async (req, res) => {
   try {
     await couponModel.findByIdAndDelete(req.params.id);
     res.redirect("/admin/coupon");
-  } catch {}
+  }  catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 };
 
 const editCoupon = async (req, res) => {
@@ -720,7 +726,9 @@ const editCoupon = async (req, res) => {
     await couponModel.findOne({ _id: id }).then((coupon) => {
       res.render("admin/editCoupon", { coupon });
     });
-  } catch {}
+  }  catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 };
 
 const changeOrderStatus = async (req, res) => {
@@ -969,28 +977,15 @@ const categorySale = async (req, res) => {
 
     let counts = [11, 16, 7, 3, 14];
     res.json({ status: true, counts });
-  } catch {}
+  }  catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 };
 //------------------------------------------<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>-----------------------------
 
 const salesReport = async (req, res) => {
   try {
-    // let data = await orderModel
-    //   .aggregate([
-    //     { $match: { orderStatus: "Delivered" } },
-    //     { $unwind: "$products" },
-    //     {
-    //       $group: {
-    //         _id: "$products.product",
-    //         // name:"$products.$product.title",
-    //         totalPrice: { $sum: "$products.total" },
-    //         count: { $sum: "$products.quantity" },
-    //       },
-    //     },
-    //   ])
-    //   .sort({ count: -1 });
-
-    // console.log(data);
+   
 
 
     var date = new Date();
@@ -1018,10 +1013,13 @@ const salesReport = async (req, res) => {
 
 
     res.render("admin/salesReport", { data });
-  } catch {}
+  }  catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 };
 
 const totalSales = async (req, res) => {
+  try{
   const data = await orderModel.aggregate([
     { $match: { orderStatus: "Delivered" } },
     { $group: { _id: { $month: "$time" }, count: { $sum: "$total" } } },
@@ -1036,6 +1034,9 @@ const totalSales = async (req, res) => {
 
   console.log(counts);
   res.json({ status: true, counts });
+ } catch (error) {
+    res.status(404).json({ error: "page not found" });
+  }
 };
 
 
@@ -1066,7 +1067,7 @@ const salesreport=async(req,res)=>{
   }
   
 } catch (error) {
-    
+  res.status(404).json({ error: "page not found" });
 }
 }
 

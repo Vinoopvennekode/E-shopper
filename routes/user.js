@@ -45,6 +45,7 @@ const {
   cartlenth,
   addressBook,
   catFilter,
+
   
   postLogin,userLogin,review
 } = require("../controllers/userController");
@@ -80,7 +81,7 @@ router.get("/userprofile", userBlock, userSession, cartItem(),userprofile);
 router.get("/submitAddress", userBlock, userSession, submitAddress);
 router.get("/deleteaddress/:id", userBlock, userSession, deleteAddress);
 router.get("/myorders", userBlock, userSession,cartItem(), myOrders);
-router.get('/myWallet',cartItem(),myWallet)
+router.get('/myWallet',userSession,cartItem(),myWallet)
 router.get("/myOrderDetails/:id", userBlock, userSession, myOrderDetails);
 router.get("/categoryFilter", categoryFilter);
 router.get('/refund/:id',paymentRefund)
@@ -90,6 +91,7 @@ router.get('/cartlength',cartlenth)
 
 router.post("/CategoryAll", categoryAll);
 router.get('/addressBook',cartItem(),addressBook)
+
 // post methods
 
 
@@ -112,7 +114,7 @@ router.post('/review',review)
 
 router.patch("/quantityInc", userSession, incQuantity);
 router.patch("/quantityDec", userSession, decQuantity);
-router.patch('/categorySelecting', userSession,catFilter)
+router.patch('/categorySelecting',catFilter)
 
 router.delete("/deletecart", userSession, deletecart);
 

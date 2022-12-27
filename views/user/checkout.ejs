@@ -429,6 +429,8 @@ let couponCode = document.getElementById("result").value;
               color: "#3399cc",
             },
         }
+
+        console.log(options);
         var rzpl = new Razorpay(options);
           rzpl.on("payment.failed", function (response) {
             paymentFailed(response);
