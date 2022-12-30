@@ -23,7 +23,12 @@
                     
                 </div>
                 <div class="row mt-3">
+                    <%if(!walletAmount){%>
+                        <h5>total balance:0</h5>
+
+                    <%}else{%>
                     <h5>total balance:<%=walletAmount%></h5>
+                    <%}%>
                 </div>
               
 
@@ -38,12 +43,9 @@
             <div class=" py-5">
                 <div class="d-flex justify-content-between align-items-center mb-3">
 
-                    <h5>wallet history</h5>
+                    <h5></h5>
                     
                 </div>
-                <%for(let i=3;i>=0;i--){%>
-                   <small> <p><%=walletHistory[i].history%></p></small>
-                    <%}%>
             </div>
           </div>
         
