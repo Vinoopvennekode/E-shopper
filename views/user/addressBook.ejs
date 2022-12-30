@@ -67,7 +67,7 @@
                                             <div class="col-md-6"><label class="labels">Name</label><input type="text" class="form-control" placeholder="first name" value=""></div>
                                             <div class="col-md-6"><label class="labels">Surname</label><input type="text" class="form-control" value="" placeholder="surname"></div>
                                         </div> -->
-                                        <form action="/edit_address/<%=address1[i]._id%>" method="post">
+                                        <form action="/edit_address/<%=address1[i]._id%>" method="post" onclick=" return validateAddress()">
                                         <div class="row mt-3">
                                             <div class="col-md-12"><label class="labels">Name</label><input name='name' type="text" class="form-control" placeholder="" value="<%=address1[i].name%>"></div>
                                             <div class="col-md-12"><label class="labels">Mobile number</label><input name="mobile" type="text" class="form-control" placeholder="" value="<%=address1[i].mobileNumber%>"></div>
