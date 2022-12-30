@@ -622,7 +622,7 @@ const userprofile = async (req, res) => {
     } else {
       address1 = [];
     }
-    res.render("user/userprofile", { users, address1,cartItem });
+    res.render("user/userprofile1", { users, address1,cartItem });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
