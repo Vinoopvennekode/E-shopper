@@ -135,9 +135,11 @@
                   <th colspan="2"><span><%=order.products[i].product.title%></span></th>
                   <th>x<%=order.products[i].quantity%></th>
                   <th> <span>$<%=order.products[i].total%></span></th>
+                  <%if(order.orderStatus=='Delivered'){%>
                   <th><button type="button" onclick="addReview('<%=order.products[i].product._id%>')" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                    review
                   </button></th>
+                  <%}%>
                 </tr>
                 <%}%>
               
