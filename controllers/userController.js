@@ -1556,9 +1556,12 @@ res.render('user/addressBook',{users,address1,cartItem})
           }
           else {
               reviewModel.create(reviews).then(async () => {
-                
+                // rating=((rat.rating*rat.review)+currentrat)/rat.review+1
+                // console.log(rating);
                   await productModel.findByIdAndUpdate(id, { $inc: { review: 1, rating: rating } })
+                  
                   res.json()
+                  
               }).catch(error => next(error))
           }
       }).catch(error => next(error))
