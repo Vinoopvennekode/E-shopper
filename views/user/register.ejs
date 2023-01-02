@@ -1,85 +1,167 @@
-<body>
-    <!-- Content -->
 
-    <div class="container-xxl">
-      <div class="authentication-wrapper authentication-basic container-p-y">
-        <div class="authentication-inner">
-          <!-- Register Card -->
-          <div class="card text-center w-25 m-auto">
-            <div class="card-body">
-            
-              <p class="mb-4">Make your app management easy and fun!</p>
-
-              <form id="form" name="myform" class="mb-3"  action="/register" method="POST" onclick="return validateForm()" >
-                <div class="mb-3">
-                  <label for="username" class="form-label">Username</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="nameid"
-                    name="userName"
-                    placeholder="Enter your username"
-                    autofocus,
-                    onkeyup="nullName()"
-                  />
-                  <small> <span id="nameerror"  class=" cursor-pointer text-danger"></span></small>
-                </div>
+    <section class="background-radial-gradient overflow-hidden">
+      <style>
+        .background-radial-gradient {
+          background-color: hsl(218, 41%, 15%);
+          background-image: radial-gradient(650px circle at 0% 0%,
+              hsl(218, 41%, 35%) 15%,
+              hsl(218, 41%, 30%) 35%,
+              hsl(218, 41%, 20%) 75%,
+              hsl(218, 41%, 19%) 80%,
+              transparent 100%),
+            radial-gradient(1250px circle at 100% 100%,
+              hsl(218, 41%, 45%) 15%,
+              hsl(218, 41%, 30%) 35%,
+              hsl(218, 41%, 20%) 75%,
+              hsl(218, 41%, 19%) 80%,
+              transparent 100%);
+        }
+    
+        #radius-shape-1 {
+          height: 220px;
+          width: 220px;
+          top: -60px;
+          left: -130px;
+          background: radial-gradient(#44006b, #ad1fff);
+          overflow: hidden;
+        }
+    
+        #radius-shape-2 {
+          border-radius: 38% 62% 63% 37% / 70% 33% 67% 30%;
+          bottom: -60px;
+          right: -110px;
+          width: 300px;
+          height: 300px;
+          background: radial-gradient(#44006b, #ad1fff);
+          overflow: hidden;
+        }
+    
+        .bg-glass {
+          background-color: hsla(0, 0%, 100%, 0.9) !important;
+          backdrop-filter: saturate(200%) blur(25px);
+        }
+      </style>
+    
+      <div class="container px-4 py-5 px-md-5 text-center text-lg-start my-5">
+        <div class="row gx-lg-5 align-items-center mb-5">
+          <div class="col-lg-6 mb-5 mb-lg-0" style="z-index: 10">
+            <h1 class="my-5 display-5 fw-bold ls-tight" style="color: hsl(218, 81%, 95%)">
+              <!-- The best offer <br /> -->
+          <span style="color: hsl(218, 81%, 75%)">Welcome the to world of shopping</span>
+            </h1>
+            <!-- <p class="mb-4 opacity-70" style="color: hsl(218, 81%, 85%)">
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+              Temporibus, expedita iusto veniam atque, magni tempora mollitia
+              dolorum consequatur nulla, neque debitis eos reprehenderit quasi
+              ab ipsum nisi dolorem modi. Quos?
+            </p> -->
+          </div>
+    
+          <div class="col-lg-6 mb-5 mb-lg-0 position-relative">
+            <div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
+            <div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
+    
+            <div class="card bg-glass">
+              <div class="card-body px-4 py-5 px-md-5">
                 
-
-                <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
-                  <input type="text" class="form-control" id="emailid" name="email" placeholder="Enter your email" onkeyup="nullEmail()" />
-                  <small><span id="emailerror"   class=" cursor-pointer text-danger">
-                  
-                  </span></small>
-                </div>
-                <div class="mb-3">
-                  <label for="email" class="form-label">Mobile Number</label>
-                  <input type="text" class="form-control" id="mobileid" name="mobile" placeholder="Enter your mobile" onkeyup="nullMobile()">
-                  <small> <span id="mobilerror"  class=" cursor-pointer text-danger"></span></small>
-
-                </div>
-                <div class="mb-3">
-                  <label for="password" class="form-label">password</label>
-                  <div class="inner-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="passwordid"
-                    name="password"
-                    placeholder="Enter your password "
-                    autofocus
-                    onkeyup="nullPassword()" 
-                    
-                  />
-                 <small> <span id="passworderror"  class=" cursor-pointer text-danger"></span></small>
-                </div>
-                </div>
-
-                <div class="mb-3">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
-                    <label class="form-check-label" for="terms-conditions">
-                      I agree to
-                      <a href="javascript:void(0);">privacy policy & terms</a>
-                    </label>
+                <form id="form" name="myform" class="mb-3"  action="/register" method="POST" onclick="return validateForm()" >
+                  <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nameid"
+                      name="userName"
+                      placeholder="Enter your username"
+                      autofocus,
+                      onkeyup="nullName()"
+                    />
+                    <small> <span id="nameerror"  class=" cursor-pointer text-danger"></span></small>
                   </div>
-                </div>
-                <button class="btn btn-primary d-grid w-100">Sign up</button>
-              </form>
-
-              <p class="text-center">
-                <span>Already have an account?</span>
-                <a href="/userLogin">
-                  <span>Sign in instead</span>
-                </a>
-              </p>
+                  
+  
+                  <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" class="form-control" id="emailid" name="email" placeholder="Enter your email" onkeyup="nullEmail()" />
+                    <small><span id="emailerror"   class=" cursor-pointer text-danger">
+                    
+                    </span></small>
+                  </div>
+                  <div class="mb-3">
+                    <label for="email" class="form-label">Mobile Number</label>
+                    <input type="text" class="form-control" id="mobileid" name="mobile" placeholder="Enter your mobile" onkeyup="nullMobile()">
+                    <small> <span id="mobilerror"  class=" cursor-pointer text-danger"></span></small>
+  
+                  </div>
+                  <div class="mb-3">
+                    <label for="password" class="form-label">password</label>
+                    <div class="inner-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="passwordid"
+                      name="password"
+                      placeholder="Enter your password "
+                      autofocus
+                      onkeyup="nullPassword()" 
+                      
+                    />
+                   <small> <span id="passworderror"  class=" cursor-pointer text-danger"></span></small>
+                  </div>
+                  </div>
+  
+                  <div class="mb-3">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
+                      <label class="form-check-label" for="terms-conditions">
+                        I agree to
+                        <a href="javascript:void(0);">privacy policy & terms</a>
+                      </label>
+                    </div>
+                  </div>
+                  <button class="btn btn-primary d-grid w-100">Sign up</button>
+                </form>
+  
+                <p class="text-center">
+                  <span>Already have an account?</span>
+                  <a href="/userLogin">
+                    <span>Sign in instead</span>
+                  </a>
+                </p>
+              </div>
             </div>
           </div>
-          <!-- Register Card -->
         </div>
       </div>
-    </div>
+    </section>
+    <!-- Section: Design Block -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     <script>
