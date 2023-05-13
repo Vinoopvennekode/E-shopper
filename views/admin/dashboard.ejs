@@ -894,7 +894,6 @@
         method: "post",
         data:{value:value},
         success: (response) => {
-            console.log(response);
             if(value==30){
             bargraph.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5']
             linegraph.data.labels=['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5']
@@ -918,8 +917,6 @@
             data1.push(response.sales[i])
           }
           bargraph.data.datasets[0].data = data
-          console.log('bargraph'+data);
-          console.log('line graph'+data1);
 
           linegraph.data.datasets[0].data=data1
           document.getElementById('barcharts').innerHTML=`<canvas id="barchart"></canvas>`
@@ -957,7 +954,6 @@ function totalsales() {
           resolve(dataCount);
           console.log(dataCount);
           if (response.status) {
-            // console.log(response.counts);
           }
         },
       });
@@ -983,9 +979,7 @@ function totalsales() {
   //       success: (response) => {
   //         dataCount = response.counts;
   //         resolve(dataCount);
-  //         console.log(dataCount);
   //         if (response.status) {
-  //           console.log(response.counts);
   //         }
   //       },
   //     });

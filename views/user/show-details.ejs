@@ -402,9 +402,7 @@ figure.zoom img {
             data:{proId:proId,price:price,offPrice:offPrice},
             method:'POST',
             success:(response)=>{
-                console.log(response);
                 if(response.stock){
-                    console.log('jhjkfgjfgjkfgjkfgjkjkfg');
                     Swal.fire({
   position: 'top',
   icon: 'success',
@@ -413,7 +411,6 @@ figure.zoom img {
   timer: 1500
 })
                 }else{
-                    console.log('jhdrhifghifghifgihfgihfghifghifghifghifghihihifhifhi');
                     Swal.fire({
   position: 'top',
   icon: 'warning',

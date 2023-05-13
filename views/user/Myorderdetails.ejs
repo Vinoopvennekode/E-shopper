@@ -278,7 +278,6 @@
     formProps.id = iddd
     if (formProps.rating) {
       axios.post('/review', formProps).then(async e => {
-        console.log(e.data);
         const Toast = Swal.mixin({
           toast: true,
           position: 'top-end',

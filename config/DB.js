@@ -11,7 +11,7 @@ const connectDB=async()=>{
             useNewUrlParser:true
 
         })
-        console.log(`mongdb connected:${db.connection.host}`);
+        ;
     }catch(error){
         console.log(error.message);
         process.exit()

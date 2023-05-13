@@ -8,14 +8,14 @@ const bannerModel = require("../model/bannerModel");
 const couponModel = require("../model/couponModel");
 const categoryModel = require("../model/categories");
 const walletModel = require("../model/walletModel");
-const reviewModel=require('../model/reviewModel')
+const reviewModel = require("../model/reviewModel");
 const bcrypt = require("bcrypt");
 const moment = require("moment");
 const { response } = require("express");
 const ObjectId = require("mongodb").ObjectId;
 const mongoose = require("mongoose");
 const Razorpay = require("razorpay");
-const {paginatedResults}=require('../utils/pagination')
+const { paginatedResults } = require("../utils/pagination");
 
 // import * as paypal from "./paypal_api.js";
 const paypal = require("../paypal_api");
@@ -48,45 +48,46 @@ const paypalorder = async (req, res) => {
   res.json(captureData);
 };
 
-const userHome = async(req, res) => {
+const userHome = async (req, res) => {
   try {
-    console.log("home");
     const userId = req.session.user;
-const cartItem=res.cartItem
-console.log(cartItem);
+    const cartItem = res.cartItem;
     let users = req.session.user;
     await bannerModel.find().then((banner) => {
-     productModel.find().then((product) => {
-        res.render("user/home", { users, product, banner,cartItem});
+      productModel.find().then((product) => {
+        res.render("user/home", { users, product, banner, cartItem });
       });
     });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
 };
-const showDetails =async (req, res) => {
+const showDetails = async (req, res) => {
   let users = req.session.user;
-  console.log(req.params.id);
-  const id=req.params.id
+  const id = req.params.id;
   if (users) {
     const userId = req.session.user._id;
-    console.log(userId);
-    let review = [] = await reviewModel.find({ product: id }).populate("user").sort({ _id: -1 })
-    console.log(review);
-    const cartItem=res.cartItem
-        productModel.findById(req.params.id).then((product) => {
-          res.render("user/show-details", {
-            users,
-            product,
-            cartItem,review
-          });
-        });
-   
+    let review = ([] = await reviewModel
+      .find({ product: id })
+      .populate("user")
+      .sort({ _id: -1 }));
+    const cartItem = res.cartItem;
+    productModel.findById(req.params.id).then((product) => {
+      res.render("user/show-details", {
+        users,
+        product,
+        cartItem,
+        review,
+      });
+    });
   } else {
-    let review = [] = await reviewModel.find({ product: id }).populate("user").sort({ _id: -1 })
+    let review = ([] = await reviewModel
+      .find({ product: id })
+      .populate("user")
+      .sort({ _id: -1 }));
 
     productModel.findById(req.params.id).then((product) => {
-      res.render("user/show-details", { users, product,review });
+      res.render("user/show-details", { users, product, review });
     });
   }
 };
@@ -94,12 +95,16 @@ const showDetails =async (req, res) => {
 const shop = async (req, res) => {
   try {
     const category = await categoryModel.find();
-      const product=res.paginatedResults
-      console.log(res.paginatedResults);
+    const product = res.paginatedResults;
     let users = req.session.user;
-    const cartItem=res.cartItem
-      res.render("user/shop", { users, product, category,pagination:true ,cartItem});
-   ;
+    const cartItem = res.cartItem;
+    res.render("user/shop", {
+      users,
+      product,
+      category,
+      pagination: true,
+      cartItem,
+    });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -107,24 +112,24 @@ const shop = async (req, res) => {
 
 const checkout = async (req, res) => {
   let userId = req.session.user._id;
-  let cart1 = await cartModal.findOne({ user: userId }).populate( "cartItem.product");
-  console.log(cart);
-    try {
-      console.log(cart1.cartItem[0].product.quantity);
-      let check
-      let products=[]
-      for(i=0;i<cart1.cartItem.length;i++){
-        if(cart1.cartItem[i].quantity>cart1.cartItem[i].product.quantity){
+  let cart1 = await cartModal
+    .findOne({ user: userId })
+    .populate("cartItem.product");
+  try {
+    let check;
+    let products = [];
+    for (i = 0; i < cart1.cartItem.length; i++) {
+      if (cart1.cartItem[i].quantity > cart1.cartItem[i].product.quantity) {
         check = true;
-        products.push(cart1.cartItem[i].product.title);}
+        products.push(cart1.cartItem[i].product.title);
       }
+    }
 
-      if(check==true){
-        req.flash('empty',products+'  products not available in cart')
-        res.redirect('/cart')
-      }else{
-      console.log(products);
-      const cartItem=res.cartItem
+    if (check == true) {
+      req.flash("empty", products + "  products not available in cart");
+      res.redirect("/cart");
+    } else {
+      const cartItem = res.cartItem;
       let users = req.session.user;
 
       let cart = await cartModal
@@ -162,7 +167,6 @@ const checkout = async (req, res) => {
 
       const add = addressnew[0].address;
       let coupon = await couponModel.find();
-      console.log(coupon);
 
       res.render("user/checkout", {
         users,
@@ -171,21 +175,19 @@ const checkout = async (req, res) => {
         product,
         subtotal,
         coupon,
-       cartItem
-      });}
-    } catch (error) {
-      console.log(error);
-      res.status(404).json({ error });
+        cartItem,
+      });
     }
-  
+  } catch (error) {
+    res.status(404).json({ error });
+  }
 };
 
 const contact = (req, res) => {
   try {
     let users = req.session.user;
-    const cartItem=res.cartItem
-    res.render("user/contact", { users, cartItem});
-
+    const cartItem = res.cartItem;
+    res.render("user/contact", { users, cartItem });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -193,8 +195,8 @@ const contact = (req, res) => {
 
 const userResgister = (req, res) => {
   try {
-    const cartItem=res.cartItem
-    res.render("user/register",cartItem);
+    const cartItem = res.cartItem;
+    res.render("user/register", cartItem);
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -202,14 +204,12 @@ const userResgister = (req, res) => {
 
 const loginView = (req, res) => {
   try {
-    console.log("loginview");
     res.render("user/login", {
       blocked: req.flash("blocked"),
       passwordErr: req.flash("passwordErr"),
       emailErr: req.flash("emailErr"),
       allFill: req.flash("allFill"),
     });
-    console.log("login kazinjuuu");
   } catch (error) {
     res.render("admin/404");
   }
@@ -222,18 +222,14 @@ const userRegisterPost = (req, res) => {
     const { userName, email, password, mobile, date, block } = req.body;
     req.session.register = req.body;
     req.session.phone = mobile;
-    console.log('reqbody');
-    console.log('print req.body',req.body);
     sendsms(mobile);
     res.redirect("/otp");
   } catch (error) {
-    console.log(error.message);
     res.status(404).json({ error: "page not found" });
   }
 };
 
 const logout = (req, res) => {
-  console.log('logouttttttt');
   req.session.destroy();
   res.redirect("/");
 };
@@ -248,8 +244,6 @@ const otp = (req, res) => {
 
 const resendotp = (req, res) => {
   const mobile = req.session.phone;
-  console.log(mobile);
-  sendsms(mobile);
   res.redirect("/otp");
 };
 
@@ -275,7 +269,6 @@ const otpVerify = async (req, res) => {
             });
             await newUser.save();
             let user = await userModel.findOne({ email: email });
-            console.log("userrrrrrrrrrr" + user);
             const newCart = new cartModal({
               user: user._id,
               cartItem: [],
@@ -291,7 +284,6 @@ const otpVerify = async (req, res) => {
         res.redirect("/userLogin");
       } else {
         req.flash("otperr", "otp not match");
-        console.log("otp failed");
         res.redirect("/otp");
       }
     });
@@ -304,19 +296,16 @@ const otpVerify = async (req, res) => {
 
 const addToCart = async (req, res) => {
   try {
-    console.log('carttttttttttttttttttttttttttt');
     const userId = req.session.user._id;
-    console.log(userId);
     const proId = req.body.proId;
-    let price
-    if(req.body.offPrice!=0){
-     price=req.body.offPrice
-    }else{
-     price = req.body.price;}
-    console.log(req.body);
+    let price;
+    if (req.body.offPrice != 0) {
+      price = req.body.offPrice;
+    } else {
+      price = req.body.price;
+    }
 
     const product = await productModel.findOne({ _id: proId });
-    console.log("quaaaaaaaantity" + product.quantity);
 
     const quantity = await cartModal.aggregate([
       {
@@ -338,12 +327,11 @@ const addToCart = async (req, res) => {
         },
       },
     ]);
-    
-      const user = await cartModal.findOne({ user: userId });
 
-      
-      if (!user) {
-        if(product.quantity>0){
+    const user = await cartModal.findOne({ user: userId });
+
+    if (!user) {
+      if (product.quantity > 0) {
         const newCart = new cartModal({
           user: userId,
           cartItem: [{ product: proId, total: price }],
@@ -351,49 +339,44 @@ const addToCart = async (req, res) => {
         });
         newCart.save();
         res.json({ response: true });
-      }else{
+      } else {
         res.json({ response: false });
       }
+    } else {
+      const cartOld = await cartModal.findOne({
+        user: userId,
+        "cartItem.product": proId,
+      });
 
-      } else {
-        const cartOld = await cartModal.findOne({
-          user: userId,
-          "cartItem.product": proId,
-        });
+      if (cartOld) {
+        const cartquantity = quantity[0].cartItem[0].quantity;
 
-        if (cartOld) {
-         
-
-          const cartquantity = quantity[0].cartItem[0].quantity;
-
-          if (cartquantity<product.quantity) {
-            
-            const updateCart = await cartModal.updateOne(
-              {
-                user: userId,
-                "cartItem.product": proId,
+        if (cartquantity < product.quantity) {
+          const updateCart = await cartModal.updateOne(
+            {
+              user: userId,
+              "cartItem.product": proId,
+            },
+            {
+              $inc: {
+                "cartItem.$.quantity": 1,
+                "cartItem.$.total": price,
+                subtotal: price,
               },
-              {
-                $inc: {
-                  "cartItem.$.quantity": 1,
-                  "cartItem.$.total": price,
-                  subtotal: price,
-                },
-              }
-            );
-            let response = {
-              stock: true,
-            };
-            res.json(response);
-          }else{
-            let response = {
-            
-              nonstock:true
-            };
-            res.json(response);
-          }
+            }
+          );
+          let response = {
+            stock: true,
+          };
+          res.json(response);
         } else {
-          if(product.quantity>0){
+          let response = {
+            nonstock: true,
+          };
+          res.json(response);
+        }
+      } else {
+        if (product.quantity > 0) {
           const cartArray = { product: proId, total: price };
           const updateCart = await cartModal.findOneAndUpdate(
             {
@@ -405,12 +388,11 @@ const addToCart = async (req, res) => {
             }
           );
           res.json({ stock: true });
-        }else{
+        } else {
           res.json({ nonstock: true });
         }
-        }
-        
-    } 
+      }
+    }
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -422,16 +404,19 @@ const cart = async (req, res) => {
   try {
     let users = req.session.user;
     const userId = req.session.user._id;
-    const cartItem=res.cartItem
+    const cartItem = res.cartItem;
 
     const cart = await cartModal
       .findOne({ user: userId })
       .populate("cartItem.product");
-   
-      res.render("user/cart", { users, cart ,cartItem,empty:req.flash('empty')});     
 
+    res.render("user/cart", {
+      users,
+      cart,
+      cartItem,
+      empty: req.flash("empty"),
+    });
   } catch (error) {
-    console.log(error.message);
     res.status(404).json({ error: "page not found" });
   }
 };
@@ -440,10 +425,8 @@ const cart = async (req, res) => {
 
 const deletecart = async (req, res) => {
   try {
-    console.log(req.body);
     let userId = req.body.userId;
     let proId = req.body.proId;
-    console.log(proId);
     let prd = await cartModal.findOne({ product: proId });
     const quantity = await cartModal.aggregate([
       {
@@ -465,9 +448,7 @@ const deletecart = async (req, res) => {
         },
       },
     ]);
-    console.log("quantity" + quantity);
     const price = quantity[0].cartItem[0].total;
-    console.log(price);
 
     cartModal
       .updateOne(
@@ -491,15 +472,12 @@ const incQuantity = async (req, res) => {
     const userId = req.body.userId;
     const productPrice = req.body.price;
     const quantity1 = req.body.quantity;
-    console.log("quantity" + quantity1);
 
-    console.log(req.body);
     const userId1 = req.session.user._id;
     const product = await productModel.findOne({ _id: productId });
 
-    console.log("stock" + product.quantity);
     const stock = product.quantity;
-    if (stock-1 >= quantity1) {
+    if (stock - 1 >= quantity1) {
       await cartModal.findOneAndUpdate(
         { user: userId, "cartItem.product": productId },
         {
@@ -534,7 +512,6 @@ const incQuantity = async (req, res) => {
     const total = quantity[0].cartItem[0].total;
     const subtotal = quantity[0].subtotal;
     const quan = quantity[0].cartItem[0].quantity;
-    console.log(total, subtotal, quan);
     if (stock > quan) {
       res.json({
         response: true,
@@ -546,7 +523,6 @@ const incQuantity = async (req, res) => {
       res.json({ stockReached: true });
     }
   } catch (err) {
-    console.log(err.message);
     res.status(404).json({ error: "page not found" });
   }
 };
@@ -557,7 +533,6 @@ const decQuantity = async (req, res) => {
     const userId = req.body.userId;
     const productPrice = req.body.price;
 
-    console.log(req.body);
     const userId1 = req.session.user._id;
 
     await cartModal.findOneAndUpdate(
@@ -595,7 +570,6 @@ const decQuantity = async (req, res) => {
         const total = quantity[0].cartItem[0].total;
         const subtotal = quantity[0].subtotal;
         const quan = quantity[0].cartItem[0].quantity;
-        console.log(total, subtotal, quan);
         res.json({
           response: true,
           total: total,
@@ -604,7 +578,6 @@ const decQuantity = async (req, res) => {
         });
       });
   } catch (err) {
-    console.log(err.message);
     res.status(404).json({ error: "page not found" });
   }
 };
@@ -613,16 +586,15 @@ const userprofile = async (req, res) => {
   try {
     let users = req.session.user;
     let userId = req.session.user._id;
-    console.log(userId);
     let address = await addressModel.findOne({ user: userId });
     let address1;
-    const cartItem=res.cartItem
+    const cartItem = res.cartItem;
     if (address) {
       address1 = address.address;
     } else {
       address1 = [];
     }
-    res.render("user/userprofile1", { users, address1,cartItem });
+    res.render("user/userprofile1", { users, address1, cartItem });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -652,7 +624,6 @@ const addAddress = async (req, res) => {
       state &&
       country
     ) {
-      console.log(req.body);
       const userId = req.session.user._id;
       const user = await addressModel.findOne({ user: userId });
       if (!user) {
@@ -709,7 +680,6 @@ const editAddress = async (req, res) => {
     addressModel
       .updateMany(
         {
-          
           "address._id": mongoose.Types.ObjectId(addressId),
         },
         {
@@ -736,7 +706,6 @@ const editAddress = async (req, res) => {
 
 const deleteAddress = async (req, res) => {
   try {
-    console.log(req.params.id);
     const userId = req.session.user._id;
     const addId = req.params.id;
     addressModel
@@ -755,7 +724,7 @@ const deleteAddress = async (req, res) => {
 };
 
 const addAddresscheckout = async (req, res) => {
-  console.log('jklsdajksdajksdajklsdajklsadjklsajklssajklasdjklsdajklsjklxczjklxzjklxcz');
+  
   try {
     const {
       name,
@@ -800,7 +769,6 @@ const addAddresscheckout = async (req, res) => {
         });
         newAddress.save();
         res.redirect("/checkout");
-        
       } else {
         const newaddress = {
           name: name,
@@ -822,7 +790,6 @@ const addAddresscheckout = async (req, res) => {
           }
         );
         res.redirect("/checkout");
-        
       }
     }
   } catch (error) {
@@ -831,25 +798,19 @@ const addAddresscheckout = async (req, res) => {
 };
 
 const submitAddress = async (req, res) => {
-  console.log(req.query.id);
   let addressId = req.query.id;
-  console.log(req.session.user._id);
   let userId = req.session.user._id;
   try {
-    await addressModel
-      .findOneAndUpdate(
-        { user: userId, "address.default": true },
-        { $set: { "address.$.default": false } }
-      )
-      
+    await addressModel.findOneAndUpdate(
+      { user: userId, "address.default": true },
+      { $set: { "address.$.default": false } }
+    );
 
-     await addressModel
-      .findOneAndUpdate(
-        { user: userId, "address._id": addressId },
-        { $set: { "address.$.default": true } }
-      )
-      console.log('haiiii');
-    res.redirect('/checkout')
+    await addressModel.findOneAndUpdate(
+      { user: userId, "address._id": addressId },
+      { $set: { "address.$.default": true } }
+    );
+    res.redirect("/checkout");
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
@@ -857,7 +818,6 @@ const submitAddress = async (req, res) => {
 
 const searchproduct = async (req, res) => {
   try {
-    console.log(req.body.product);
     let users = req.session.user;
     const product = await productModel.find({
       $or: [
@@ -874,15 +834,11 @@ const searchproduct = async (req, res) => {
 
 const postcheckout = async (req, res) => {
   try {
-    console.log(req.body);
-    // console.log("userId" + req.session.user._id);
     const userId = req.session.user._id;
-    console.log(req.body.paymentMethod);
     const { date } = req.body;
 
     const couponName = req.body.couponCode;
     let coupon = await couponModel.findOne({ code: couponName });
- 
 
     let addressnew = await addressModel.aggregate([
       {
@@ -906,15 +862,12 @@ const postcheckout = async (req, res) => {
     const add = addressnew[0].address;
     if (add == 0) {
       {
-        console.log("choose payment method");
         let response = { message1: "must choose your address" };
         res.json(response);
       }
     } else {
-      // console.log("addressssssss" + add);
 
       let cart = await cartModal.findOne({ user: userId });
-      // console.log("cart" + cart);
 
       const products = cart.cartItem;
       const total = req.body.total;
@@ -935,19 +888,14 @@ const postcheckout = async (req, res) => {
         });
         newOrder.save().then(async (result) => {
           req.session.orderId = result._id;
-          // console.log("result id" + result._id);
-          // console.log("result" + result);
           const order = await orderModel.findOne({ _id: result._id });
-          // console.log("order" + order);
           const findproId = order.products;
           findproId.forEach(async (el) => {
-            console.log("element" + el);
             let removeQuantity = await productModel.findOneAndUpdate(
               { _id: el.product },
               { $inc: { quantity: -el.quantity } }
             );
           });
-          // console.log("result" + result);
           if (coupon) {
             await couponModel.findOneAndUpdate(
               { _id: coupon._id },
@@ -983,10 +931,11 @@ const postcheckout = async (req, res) => {
         });
         newOrder.save().then((result) => {
           let userOrderData = result;
-        
-          const orderId1=result.id
-          if(coupon){
-            var couponId=coupon._id}
+
+          const orderId1 = result.id;
+          if (coupon) {
+            var couponId = coupon._id;
+          }
           id = result._id.toString();
           instance.orders.create(
             {
@@ -998,8 +947,8 @@ const postcheckout = async (req, res) => {
               let response = {
                 razorpay: true,
                 orderdata: order,
-                orderId:orderId1,
-                couponId:couponId,
+                orderId: orderId1,
+                couponId: couponId,
                 userOrderData: userOrderData,
               };
               res.json(response);
@@ -1009,21 +958,14 @@ const postcheckout = async (req, res) => {
       } else if (req.body.paymentMethod === "paypal") {
         let response = { paypal };
         res.json(response);
-        
       } else if (req.body.paymentMethod === "wallet") {
         const user = await userModel.findOne({ _id: userId });
-        console.log(user.walletBalance);
         const walletBalance = user.walletBalance;
-        console.log(total);
-        if(!walletBalance){
-          console.log('wallet balance zero');
+        if (!walletBalance) {
           let response = { message2: "wallet balance is zero" };
-        res.json(response);
-        }
-        else if (walletBalance < total) {
+          res.json(response);
+        } else if (walletBalance < total) {
           const balancePayment = total - walletBalance;
-          console.log(balancePayment);
-          console.log(userId, products, total, add);
           const newOrder = new orderModel({
             user: userId,
             products: products,
@@ -1035,14 +977,13 @@ const postcheckout = async (req, res) => {
             orderStatus: "order confirmed",
             date: moment(date).format("MMMM Do YYYY, h:mm:ss a"),
           });
-          newOrder.save().then(async(result) => { 
-            console.log(result);
-            console.log(result._id);
+          newOrder.save().then(async (result) => {
             let userOrderData = result;
             req.session.orderId = result._id;
-            const orderId1=result.id
-           if(coupon){
-            var couponId=coupon._id}
+            const orderId1 = result.id;
+            if (coupon) {
+              var couponId = coupon._id;
+            }
 
             id = result._id.toString();
             instance.orders.create(
@@ -1055,8 +996,8 @@ const postcheckout = async (req, res) => {
                 let response = {
                   razorpay: true,
                   ordertotal: walletBalance,
-                  orderId:orderId1,
-                  couponId:couponId,
+                  orderId: orderId1,
+                  couponId: couponId,
                   orderdata: order,
                   userOrderData: userOrderData,
                 };
@@ -1077,33 +1018,41 @@ const postcheckout = async (req, res) => {
             date: moment(date).format("MMMM Do YYYY, h:mm:ss a"),
           });
           newOrder.save().then(async (result) => {
-            console.log("result id" + result._id);
-            console.log("result" + result);
             const order = await orderModel.findOne({ _id: result._id });
-            console.log("order" + order);
             const findproId = order.products;
             findproId.forEach(async (el) => {
-              console.log("element" + el);
               let removeQuantity = await productModel.findOneAndUpdate(
                 { _id: el.product },
                 { $inc: { quantity: -el.quantity } }
               );
             });
-            console.log("result" + result);
-            const totalamount=walletBalance-total
-            console.log(totalamount);
+            const totalamount = walletBalance - total;
             await userModel.findOneAndUpdate(
-              {_id:req.session.user._id},
-              {$inc:{
-                walletBalance: -total},$push:{walletHistory:{history:'Rs.'+total+' Debited on '+moment(Date.now()).format('DD-MM-YYYY')+' (orderId-'+result._id+')'}}}
-            )
-            console.log(result._id);
+              { _id: req.session.user._id },
+              {
+                $inc: {
+                  walletBalance: -total,
+                },
+                $push: {
+                  walletHistory: {
+                    history:
+                      "Rs." +
+                      total +
+                      " Debited on " +
+                      moment(Date.now()).format("DD-MM-YYYY") +
+                      " (orderId-" +
+                      result._id +
+                      ")",
+                  },
+                },
+              }
+            );
             await orderModel.findByIdAndUpdate(
-              { _id:  result._id},
+              { _id: result._id },
               { $set: { deductwallet: total } }
             );
 
-            if (coupon) { 
+            if (coupon) {
               await couponModel.findOneAndUpdate(
                 { _id: coupon._id },
                 { $inc: { couponCount: -1 } }
@@ -1121,7 +1070,6 @@ const postcheckout = async (req, res) => {
           });
         }
       } else {
-        console.log("choose payment method");
         let response = { message: "must choose your payment method" };
         res.json(response);
       }
@@ -1133,9 +1081,7 @@ const postcheckout = async (req, res) => {
 
 const postVerifyPayment = async (req, res) => {
   try {
-    // console.log("post verify payment");
 
-    console.log(req.body.orderId);
     let razorpayOrderDataId = req.body["razorpayOrderData[razorpay_order_id]"];
 
     let paymentId = req.body["razorpayOrderData[razorpay_payment_id]"];
@@ -1151,20 +1097,21 @@ const postVerifyPayment = async (req, res) => {
     );
 
     if (validate) {
+      if (req.body.ordertotal) {
+        await orderModel.findByIdAndUpdate(
+          { _id: req.body.orderId },
+          { $set: { deductwallet: req.body.ordertotal } }
+        );
 
-      if(req.body.ordertotal){
-console.log('validateeeeeeeee');
-      await orderModel.findByIdAndUpdate(
-        { _id:  req.body.orderId},
-        { $set: { deductwallet: req.body.ordertotal } }
-      );
-
-      await userModel.findOneAndUpdate(
-        {_id:req.session.user._id},
-        {$inc:{
-          walletBalance: -req.body.ordertotal}}
-      )}
-console.log('orderrrrrrrrrr');
+        await userModel.findOneAndUpdate(
+          { _id: req.session.user._id },
+          {
+            $inc: {
+              walletBalance: -req.body.ordertotal,
+            },
+          }
+        );
+      }
       const order = await orderModel.findOne({ _id: req.body.orderId });
 
       const findproId = order.products;
@@ -1174,8 +1121,7 @@ console.log('orderrrrrrrrrr');
           { $inc: { quantity: -el.quantity } }
         );
       });
-      const couponId =req.body.couponId;  
-      console.log(',jghsadkjsdghalhgsakjsdga'+couponId);
+      const couponId = req.body.couponId;
       const coupon = await couponModel.findOne({ _id: couponId });
 
       if (coupon) {
@@ -1184,9 +1130,6 @@ console.log('orderrrrrrrrrr');
           { $inc: { couponCount: -1 } }
         );
       }
-
-   
-
 
       await cartModal.findOneAndRemove({ user: req.session.user._id });
       const newCart = new cartModal({
@@ -1209,7 +1152,6 @@ console.log('orderrrrrrrrrr');
           res.json({ status: true });
         });
     } else {
-      console.log("not valid");
     }
   } catch (error) {
     res.status(404).json({ error: "page not found" });
@@ -1223,33 +1165,36 @@ const paymentfailed = (req, res) => {
     res.status(404).json({ error: "page not found" });
   }
 };
- 
-const myWallet = async (req, res) => {
-  let users = req.session.user; 
-  let userId = req.session.user._id;
-  const cartItem=res.cartItem
-  const user = await userModel.findOne({ _id: userId });
-  console.log(user);
-   const walletAmount = user.walletBalance;
-  const walletHistory=user.walletHistory
-  const length=user.walletHistory.length
-  console.log(walletHistory);
 
-  res.render("user/wallet", { users, walletHistory,length,walletAmount,cartItem});
+const myWallet = async (req, res) => {
+  let users = req.session.user;
+  let userId = req.session.user._id;
+  const cartItem = res.cartItem;
+  const user = await userModel.findOne({ _id: userId });
+  const walletAmount = user.walletBalance;
+  const walletHistory = user.walletHistory;
+  const length = user.walletHistory.length;
+
+  res.render("user/wallet", {
+    users,
+    walletHistory,
+    length,
+    walletAmount,
+    cartItem,
+  });
 };
 
 const myOrders = async (req, res) => {
   try {
     let users = req.session.user;
     let userId = req.session.user._id;
-    const cartItem=res.cartItem
+    const cartItem = res.cartItem;
     const order = await orderModel
       .find({ user: userId })
       .populate("user")
       .sort({ date: -1 })
       .then((order) => {
-        // console.log(order);
-        res.render("user/myOrders", { users, order,cartItem });
+        res.render("user/myOrders", { users, order, cartItem });
       });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
@@ -1259,12 +1204,12 @@ const myOrders = async (req, res) => {
 const myOrderDetails = (req, res) => {
   try {
     let users = req.session.user;
-    const cartItem=res.cartItem
+    const cartItem = res.cartItem;
     const order = orderModel
       .findById(req.params.id)
       .populate("products.product")
       .then((order) => {
-        res.render("user/Myorderdetails", { order, users,cartItem });
+        res.render("user/Myorderdetails", { order, users, cartItem });
       });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
@@ -1272,14 +1217,12 @@ const myOrderDetails = (req, res) => {
 };
 
 const applycoupon = async (req, res) => {
-  console.log(req.body);
   let couponmsg;
   let grandtotal;
   let total = req.body.total;
   let code = req.body.couponCode;
   req.session.couponCode = code;
   let result = await couponModel.findOne({ code: code, status: "ACTIVE" });
-  console.log("result" + result);
   let nowDate = Date.now();
   if (!result) {
     couponmsg = "coupon does not exist";
@@ -1292,7 +1235,6 @@ const applycoupon = async (req, res) => {
     let couponCount = parseInt(result.couponCount);
     let date = result.expireDate;
 
-    console.log(cuponType, cutOff, maxRedeemAmount, couponCount, date, nowDate);
     if (couponCount != 0) {
       if (nowDate < date) {
         if (cuponType == "Percentage") {
@@ -1354,7 +1296,6 @@ const applycoupon = async (req, res) => {
 };
 
 const cancleOrder = async (req, res) => {
-  console.log(req.params.id);
 
   const orderId = req.params.id;
   await orderModel.findByIdAndUpdate(orderId, {
@@ -1364,20 +1305,29 @@ const cancleOrder = async (req, res) => {
 };
 
 const paymentRefund = async (req, res) => {
-  console.log(req.params.id);
   const userId = req.session.user._id;
-  console.log(userId);
   const orderId = req.params.id;
   const order = await orderModel.findOne({ _id: orderId });
-  console.log(order.total);
   const totalPrice = order.total;
 
   const refund = await userModel.findOneAndUpdate(
     { _id: userId },
-    { $inc: { walletBalance: totalPrice },$push:{walletHistory:{history:'Rs.'+totalPrice+' Credited on '+moment(Date.now()).format('DD-MM-YYYY')+' (orderId-'+orderId+')'}} }
-    
+    {
+      $inc: { walletBalance: totalPrice },
+      $push: {
+        walletHistory: {
+          history:
+            "Rs." +
+            totalPrice +
+            " Credited on " +
+            moment(Date.now()).format("DD-MM-YYYY") +
+            " (orderId-" +
+            orderId +
+            ")",
+        },
+      },
+    }
   );
-  console.log(refund);
 
   await orderModel.findByIdAndUpdate(orderId, {
     $set: { paymentStatus: "payment Refunded" },
@@ -1393,7 +1343,7 @@ const productReturn = async (req, res) => {
       $set: { orderStatus: "Returned" },
     });
     res.redirect(`/myOrderDetails/${req.params.id}`);
-  }  catch (error) {
+  } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
 };
@@ -1402,7 +1352,6 @@ const categoryFilter = async (req, res) => {
   try {
     let tags = req.query.tags;
     let filterkey = tags.split(",");
-    console.log(filterkey);
 
     await productModel
       .find({ category: { $in: [filterkey] } })
@@ -1413,7 +1362,7 @@ const categoryFilter = async (req, res) => {
         };
         res.json(response);
       });
-  }  catch (error) {
+  } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
 };
@@ -1424,46 +1373,38 @@ const categoryAll = async (req, res) => {
       res.json(result);
     });
   } catch (err) {
-    console.log(err);
   }
 };
 
 const postLogin = async (req, res) => {
   try {
-    console.log(req.body);
     const { email, password } = req.body;
     if (email && password) {
       let user = await userModel.findOne({ email: email });
       if (user) {
         const compare = await bcrypt.compare(password, user.password);
-        console.log(compare);
         if (compare) {
           if (user.block == false) {
             req.session.userlogin = true;
             req.session.user = user;
             res.redirect("/");
-            console.log("login succeded");
           } else {
-            console.log("userblock");
             req.flash("blocked", "you are blocked");
             res.redirect("/userLogin");
           }
         } else {
-          console.log("password err");
           req.flash("passwordErr", "your password is incorrect");
           res.redirect("/userLogin");
         }
       } else {
-        console.log("email err");
         req.flash("emailErr", "invalid User");
         res.redirect("/userLogin");
       }
     } else {
-      console.log("allFill");
       req.flash("allFill", "fill all input");
       res.redirect("/userLogin");
     }
-  }  catch (error) {
+  } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
 };
@@ -1481,113 +1422,101 @@ const cartlenth = async (req, res) => {
   const item = await cartModal
     .findOne({ user: userId })
     .populate("cartItem.product");
-  console.log("leeeeeeenght");
-  console.log(item);
 };
 
 const categorySelect = async (req, res) => {
   try {
-    console.log("categryyyyyy               " + req.params.id);
     const catId = req.params.id;
 
     let users = req.session.user;
     const product = await productModel.find({ category: catId });
-    console.log("product                    " + product);
     const category = await categoryModel.find();
-    console.log("category              " + category);
     res.render("user/shop", { users, product, category });
-  }  catch (error) {
+  } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
 };
 
-const addressBook=async(req,res)=>{
-  try{
-     const users=req.session.user
-     const userId=req.session.user._id
-     const cartItem=res.cartItem
-     let address = await addressModel.findOne({ user: userId });
-     let address1;
-     if (address) {
-       address1 = address.address;
-     } else {
-       address1 = [];}
-res.render('user/addressBook',{users,address1,cartItem})
-
+const addressBook = async (req, res) => {
+  try {
+    const users = req.session.user;
+    const userId = req.session.user._id;
+    const cartItem = res.cartItem;
+    let address = await addressModel.findOne({ user: userId });
+    let address1;
+    if (address) {
+      address1 = address.address;
+    } else {
+      address1 = [];
+    }
+    res.render("user/addressBook", { users, address1, cartItem });
   } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
+};
 
-}
+const review = async (req, res) => {
+  try {
+    let userId = req.session.user._id;
+    let { rating, review, id, title } = req.body;
 
+    rating = rating * 20;
+    const reviews = {};
+    reviews.rating = rating;
+    reviews.product = id;
+    reviews.user = userId;
+    reviews.review = review;
+    reviews.title = title;
+    const currentrat = rating;
 
+    reviewModel
+      .findOneAndReplace({ product: id, user: userId }, reviews)
+      .then(async (rev) => {
+        if (rev) {
+          let rat = ({} = await productModel.findById(id, {
+            _id: 0,
+            rating: 1,
+            review: 1,
+          }));
+          // rating = (rat.rating + currentrat - rev.rating) / rat.review
+          rating =
+            (rat.rating * rat.review - rev.rating + currentrat) / rat.review;
 
+          await productModel.findByIdAndUpdate(id, {
+            $set: { rating: rating },
+          });
+          res.json();
+        } else {
+          reviewModel
+            .create(reviews)
+            .then(async () => {
+              // rating=((rat.rating*rat.review)+currentrat)/rat.review+1
+              await productModel.findByIdAndUpdate(id, {
+                $inc: { review: 1, rating: rating },
+              });
 
-
-  const review=async(req,res)=>{
-    console.log('sdasasdasaaasdsda');
-    console.log(req.body);
-    try {
-      let userId = req.session.user._id
-      let { rating, review, id, title } = req.body
-
-      rating = rating * 20
-      const reviews = {}
-      reviews.rating = rating
-      reviews.product = id
-      reviews.user = userId
-      reviews.review = review
-      reviews.title = title
-      const currentrat=rating
-      console.log(currentrat);
-
-      reviewModel.findOneAndReplace({ product: id, user: userId }, reviews).then(async rev => {
-        console.log(rev);
-          if (rev) {
-              let rat = {} = await productModel.findById(id, { _id: 0, rating: 1, review: 1 })
-              console.log(rat);
-              // rating = (rat.rating + currentrat - rev.rating) / rat.review
-              rating=((rat.rating*rat.review)-rev.rating+currentrat)/rat.review
-              
-              console.log(rat.rating+'   '+currentrat+'   '+rev.rating+'   '+rat.review);
-              console.log(rating);
-              await productModel.findByIdAndUpdate(id, { $set: { rating: rating } })
-              res.json()
-          }
-          else {
-              reviewModel.create(reviews).then(async () => {
-                // rating=((rat.rating*rat.review)+currentrat)/rat.review+1
-                // console.log(rating);
-                  await productModel.findByIdAndUpdate(id, { $inc: { review: 1, rating: rating } })
-                  
-                  res.json()
-                  
-              }).catch(error => next(error))
-          }
-      }).catch(error => next(error))
-
-  }  catch (error) {
+              res.json();
+            })
+            .catch((error) => next(error));
+        }
+      })
+      .catch((error) => next(error));
+  } catch (error) {
     res.status(404).json({ error: "page not found" });
   }
-  }
+};
 
-
-  const catFilter=async(req,res)=>{
-    try {
-      console.log(req.body);
-      const catId=req.body.id
+const catFilter = async (req, res) => {
+  try {
+    const catId = req.body.id;
 
     const product = await productModel.find({ category: catId });
 
-console.log(product);
-res.json({status:true,product})
-
-    }  catch (error) {
-      res.status(404).json({ error: "page not found" });
-    }
+    res.json({ status: true, product });
+  } catch (error) {
+    res.status(404).json({ error: "page not found" });
   }
-
-
+};
 
 module.exports = {
   userHome,
@@ -1599,7 +1528,6 @@ module.exports = {
   postVerifyPayment,
   paymentfailed,
   contact,
-
   loginView,
   userResgister,
   userRegisterPost,
@@ -1633,6 +1561,7 @@ module.exports = {
   cartlenth,
   postLogin,
   userLogin,
-  addressBook,review,
-  catFilter
+  addressBook,
+  review,
+  catFilter,
 };

@@ -8,7 +8,6 @@ paypal
     })
       .then((response) => response.json())
       .then((response) => {
-        console.log(response);
         return response.id;
       });
   },

@@ -83,7 +83,6 @@ function salesreport(){
   alert(endDate)
 
   axios.patch("/admin/salesreport",{startDate:startDate,endDate:endDate}).then((e)=>{
-    console.log(e.data);
     let html=''
     let data=e.data.salesReport
 

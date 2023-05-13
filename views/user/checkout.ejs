@@ -271,8 +271,6 @@
       let result=document.getElementById('result').value
 let findSelected=()=>{
   let selected =document.querySelector("input[name='couponCode']:checked")
-  console.log('sadsda');
-  console.log(selected.value);
   document.getElementById('result').value=selected.value
 
 }
@@ -293,7 +291,6 @@ const submit=(id)=>{
 function verifyCoupon(subtotal){
   let couponCode = document.getElementById("result").value;
     let total = subtotal;
-    console.log(total);
 if(couponCode==0){
   document.getElementById("CouponError").style.color = "red";
       document.getElementById("CouponError").innerHTML = "Enter a Coupon Code";
@@ -306,7 +303,6 @@ if(couponCode==0){
     success:(response)=>{
       if(response.status==true){
         // document.getElementById('CouponError1').style='display.none'
-        console.log(response.cutOff+',,,,,'+response. grandtotal);
         document.getElementById("couponDiscount").innerHTML =
               "Rs." + response.cutOff;
             document.getElementById("grandTotalAmount").innerHTML =
@@ -341,8 +337,6 @@ let couponCode = document.getElementById("result").value;
     let userOrederData
     $('#formId').submit((e)=>{
         e.preventDefault();
-        console.log("sadfssdfdsfdfsfds");
-
         $.ajax({
             url:"/checkout",
             method:"post",
@@ -411,7 +405,6 @@ let couponCode = document.getElementById("result").value;
             image: "https://example.com/your_logo",
             order_id:response.orderdata.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
             handler: function (response) {
-              console.log(response );
             //  alert(response.razorpay_payment_id);
             //   alert(response.razorpay_order_id);
             //   alert(response.razorpay_signature); 
@@ -430,7 +423,6 @@ let couponCode = document.getElementById("result").value;
             },
         }
 
-        console.log(options);
         var rzpl = new Razorpay(options);
           rzpl.on("payment.failed", function (response) {
             paymentFailed(response);
@@ -448,7 +440,6 @@ let couponCode = document.getElementById("result").value;
 
 
     function verifyPayment(razorpayOrderData) {
-    console.log(razorpayOrderData);
    
     $.ajax({
       url: "/verifyPayment",
