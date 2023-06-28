@@ -18,7 +18,6 @@ const Razorpay = require("razorpay");
 const { paginatedResults } = require("../utils/pagination");
 
 // import * as paypal from "./paypal_api.js";
-const paypal = require("../paypal_api");
 // var{paypal}=require('../paypal_api.js')
 var {
   validatePaymentVerification,
@@ -37,16 +36,7 @@ const {
 const product = require("../model/productModel");
 const { resolveInclude } = require("ejs");
 
-const paypal1 = async (req, res) => {
-  const order = await paypal.createOrder();
-  res.json(order);
-};
 
-const paypalorder = async (req, res) => {
-  const { orderId } = req.params;
-  const captureData = await paypal.capturePayment(orderId);
-  res.json(captureData);
-};
 
 const userHome = async (req, res) => {
   try {
@@ -1551,8 +1541,6 @@ module.exports = {
   myWallet,
   myOrderDetails,
   applycoupon,
-  paypal1,
-  paypalorder,
   cancleOrder,
   paymentRefund,
   productReturn,

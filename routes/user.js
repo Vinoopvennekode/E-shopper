@@ -35,8 +35,6 @@ const {
   myWallet,
   myOrderDetails,
   applycoupon,
-  paypal1,
-  paypalorder,
   cancleOrder,
   paymentRefund,
   productReturn,
@@ -106,8 +104,6 @@ router.post("/checkout", userBlock, userSession, postcheckout);
 router.post("/verifyPayment", userSession, postVerifyPayment);
 router.post("/paymentFailed", paymentfailed);
 router.post("/applycoupon", userSession, applycoupon);
-router.post("/api/orders", userSession, paypal1);
-router.post("/api/orders/:orderId/capture", userSession, paypalorder);
 router.get("/cancelOrder/:id", cancleOrder);
 router.post('/review',review)
 
